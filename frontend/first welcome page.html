@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Fridge</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #2e8b57;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            position: relative;
+        }
+        header h1 {
+            margin: 0;
+        }
+        header nav {
+            margin-top: 10px;
+        }
+        header nav a {
+            color: white;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+
+        /* Login Button Style */
+        header .login-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background-color: #007bff; /* Blue color for a typical login button */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        header .login-btn:hover {
+            background-color: #0056b3; /* Darker blue for hover effect */
+        }
+
+        header .login-btn:focus {
+            outline: none;
+        }
+
+        main {
+            padding: 20px;
+        }
+        .intro {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .intro h2 {
+            font-size: 2em;
+        }
+        .intro p {
+            font-size: 1.2em;
+            color: #555;
+        }
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .cta-buttons button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background-color: #2e8b57;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .cta-buttons button:hover {
+            background-color: #3cb371;
+        }
+        .sections {
+            margin-bottom: 50px;
+        }
+        .sections ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .sections li {
+            padding: 10px;
+            background-color: #f2f2f2;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .sections li:hover {
+            background-color: #e0e0e0;
+        }
+        footer {
+            background-color: #2e8b57;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        /* Popup styles */
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 30%;
+            border-radius: 5px;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Input Fields and Button */
+        .modal input[type="text"],
+        .modal input[type="password"],
+        .modal input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .modal button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .modal button:hover {
+            background-color: #0056b3;
+        }
+
+        .modal .toggle-form {
+            font-size: 0.9rem;
+            color: #007bff;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Community Fridge</h1>
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">About Us</a>
+        <a href="#">Contact Us</a>
+    </nav>
+    <button class="login-btn" id="loginBtn">Login</button> <!-- Regular Login Button -->
+</header>
+
+<main>
+    <!-- Introduction Section -->
+    <section class="intro">
+        <h2>Welcome to the Community Fridge</h2>
+        <p>Our community fridge is a free resource for people in need of food. Whether you're looking to donate, receive food, volunteer, or manage operations, this is your place to help out!</p>
+        <div class="cta-buttons">
+            <button onclick="window.location.href='#donate'">Donate Food</button>
+            <button onclick="window.location.href='#receive'">Looking for Food</button>
+            <button onclick="window.location.href='#volunteer'">Become a Volunteer</button>
+            <button onclick="window.location.href='#manage'">Manage a Fridge</button>
+        </div>
+    </section>
+
+    <!-- Donate Section -->
+    <section class="sections" id="donate">
+        <h2>Donate Food</h2>
+        <p>Register as a restaurant or individual donor to help supply the community fridge with nutritious food.</p>
+        <ul>
+            <li><a href="#">Register to Donate</a></li>
+            <li><a href="#">List Food for Donation</a></li>
+            <li><a href="#">Track Your Donation History</a></li>
+        </ul>
+    </section>
+
+    <!-- Receive Section -->
+    <section class="sections" id="receive">
+        <h2>Food Recipient</h2>
+        <p>If you are looking for Food, you can see the food available in multiple community fridge locations, reserve the food, and pick it up.</p>
+        <ul>
+            <li><a href="#">View Available Food</a></li>
+            <li><a href="#">Reserve Food</a></li>
+            <li><a href="#">Collect Food</a></li>
+        </ul>
+    </section>
+
+    <!-- Volunteer Section -->
+    <section class="sections" id="volunteer">
+        <h2>Volunteer with Us</h2>
+        <p>Help deliver food and assist in maintaining the community fridge. View schedules and food reservations to ensure the smooth running of operations.</p>
+        <ul>
+            <li><a href="#">Manage Fridge Inventory</a></li>
+            <li><a href="#">See List of Food Reservations</a></li>
+            <li><a href="#">Send Notifications</a></li>
+        </ul>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2025 Community Fridge. All rights reserved.</p>
+</footer>
+
+<!-- The Modal -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalTitle">Login</h2>
+        <form id="loginForm" action="loginProcess.php" method="POST">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Login</button>
+        </form>
+        
+        <p class="toggle-form" onclick="toggleForm()">Don't have an account? Sign up</p>
+
+        <form id="signupForm" action="signupProcess.php" method="POST" style="display: none;">
+            <h2>Sign Up</h2>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="newUsername">Username:</label>
+            <input type="text" id="newUsername" name="newUsername" required>
+            <label for="newPassword">Password:</label>
+            <input type="password" id="newPassword" name="newPassword" required>
+            <button type="submit">Sign Up</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Get the modal
+    var modal = document.getElementById("loginModal");
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("loginBtn");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the login button, open the modal
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    // Toggle between login and signup form
+    function toggleForm() {
+        var loginForm = document.getElementById("loginForm");
+        var signupForm = document.getElementById("signupForm");
+        var modalTitle = document.getElementById("modalTitle");
+
+        if (loginForm.style.display === "none") {
+            loginForm.style.display = "block";
+            signupForm.style.display = "none";
+            modalTitle.innerHTML = "Login";
+        } else {
+            loginForm.style.display = "none";
+            signupForm.style.display = "block";
+            modalTitle.innerHTML = "Sign Up";
+        }
+    }
+</script>
+
+</body>
+</html>
