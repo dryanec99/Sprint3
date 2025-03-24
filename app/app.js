@@ -33,14 +33,43 @@ app.get("/volunteer", function(req, res) {
 app.get("/login", function(req, res) {
   res.sendFile(path.join (__dirname, "..", "frontend", "login.html"));
 });
-//Dynamic route for the "guidelines" page
-app.get("/guidelines", function(req, res) {
-  res.sendFile(path.join (__dirname, "..", "frontend", "guidelines.html"));
+//Dynamic route for the "donationguidelines" page
+app.get("/donationguidelines", function(req, res) {
+  res.sendFile(path.join (__dirname, "..", "frontend", "donationguidelines.html"));
 });
 //Dynamic route for the "donationform" page
 app.get("/donationform", function(req, res) {
   res.sendFile(path.join (__dirname, "..", "frontend", "donationform.html"));
 });
+//Dynamic route for the "donationhistory" page
+app.get("/donationhistory", function(req, res) {
+  res.sendFile(path.join (__dirname, "..", "frontend", "donationhistory.html"));
+});
+//Dynamic route for the "viewfood" page
+app.get("/viewfood", function(req, res) {
+  res.sendFile(path.join (__dirname, "..", "frontend", "viewfood.html"));
+});
+//Dynamic route for the "reservefood" page
+app.get("/reservefood", function(req, res) {
+  res.sendFile(path.join (__dirname, "..", "frontend", "reservefood.html"));
+});
+//Dynamic route for the "reservations" page
+app.get("/reservations", function(req, res) {
+  res.sendFile(path.join (__dirname, "..", "frontend", "reservations.html"));
+});
+//Dynamic route for the "manageinventory" page
+app.get("/manageinventory", function(req, res) {
+  res.sendFile(path.join (__dirname, "..", "frontend", "manageinventory.html"));
+});
+//Dynamic route for the "managereservations" page
+app.get("/managereservations", function(req, res) {
+  res.sendFile(path.join (__dirname, "..", "frontend", "managereservations.html"));
+});
+//Dynamic route for the "sendnotifications" page
+app.get("/sendnotifications", function(req, res) {
+  res.sendFile(path.join (__dirname, "..", "frontend", "sendnotifications.html"));
+});
+
 
 // Start server on port 3000
 app.listen(3000,function(){

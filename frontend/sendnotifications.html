@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Send Notifications - Community Fridge</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background-color: #2e8b57;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+      position: relative;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+    header nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-size: 1.1em;
+    }
+    main {
+      padding: 40px 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    form {
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    form h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    form label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: bold;
+    }
+    form input[type="text"],
+    form textarea,
+    form select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+    form textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+    form button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2e8b57;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    form button:hover {
+      background-color: #3cb371;
+    }
+    .back-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .back-link a {
+      text-decoration: none;
+      color: #2e8b57;
+      font-weight: bold;
+    }
+    footer {
+      background-color: #2e8b57;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Community Fridge</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="about">About Us</a>
+      <a href="contact">Contact Us</a>
+    </nav>
+  </header>
+  <main>
+    <form action="sendNotificationProcess.php" method="POST">
+      <h2>Send Notification</h2>
+      
+      <label for="subject">Notification Subject:</label>
+      <input type="text" id="subject" name="subject" placeholder="Enter notification subject" required>
+      
+      <label for="message">Notification Message:</label>
+      <textarea id="message" name="message" placeholder="Enter your message" required></textarea>
+      
+      <label for="audience">Target Audience:</label>
+      <select id="audience" name="audience" required>
+        <option value="">Select Audience</option>
+        <option value="all">All Users</option>
+        <option value="donors">Donors</option>
+        <option value="recipients">Food Recipients</option>
+        <option value="volunteers">Volunteers</option>
+      </select>
+      
+      <button type="submit">Send Notification</button>
+    </form>
+    <div class="back-link">
+      <a href="volunteer">&larr; Back to Volunteer</a>
+    </div>
+  </main>
+  <footer>
+    <p>&copy; 2025 Community Fridge. All rights reserved.</p>
+  </footer>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const form = document.querySelector("form");
+      
+      form.addEventListener("submit", function(e) {
+        e.preventDefault(); // Prevent the default form submission
+    
+        const subject = document.getElementById("subject").value.trim();
+        const message = document.getElementById("message").value.trim();
+        const audience = document.getElementById("audience").value;
+    
+        // Basic client-side validation
+        if (!subject || !message || !audience) {
+          alert("Please fill in all fields.");
+          return;
+        }
+        
+        // Prepare data to send
+        const data = { subject, message, audience };
+    
+        // Send data to the backend using fetch API (AJAX)
+        fetch("sendNotificationProcess.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+          if (result.success) {
+            alert("Notification sent successfully!");
+            form.reset(); // Reset the form fields
+          } else {
+            alert("Error sending notification: " + result.error);
+          }
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          alert("An error occurred while sending the notification.");
+        });
+      });
+    });
+    </script>
+    
+</body>
+</html>
