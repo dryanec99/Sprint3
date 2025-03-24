@@ -29,6 +29,25 @@
       text-decoration: none;
       font-size: 1.1em;
     }
+    /* Back Arrow Button */
+    header .back-btn {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      background: linear-gradient(90deg, #2e8b57 0%, #3cb371 100%);
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 1em;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    header .back-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    }
     main {
       padding: 40px 20px;
     }
@@ -44,21 +63,31 @@
       font-size: 1.2em;
       margin-bottom: 20px;
     }
-    .sections ul {
-      list-style-type: none;
+    /* New Volunteer Menu Styles */
+    .volunteer-menu {
+      list-style: none;
       padding: 0;
+      margin: 20px auto;
       max-width: 600px;
-      margin: 0 auto;
     }
-    .sections li {
+    .volunteer-item {
+      margin-bottom: 15px;
+    }
+    .volunteer-item a {
+      display: block;
+      text-decoration: none;
       padding: 15px;
-      background-color: #f2f2f2;
-      margin: 10px 0;
+      background-color: #fff;
+      border: 1px solid #ddd;
       border-radius: 5px;
-      transition: background-color 0.3s ease;
+      color: #2e8b57;
+      font-weight: bold;
+      text-align: center;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
-    .sections li:hover {
-      background-color: #e0e0e0;
+    .volunteer-item a:hover {
+      background-color: #f2f2f2;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     footer {
       background-color: #2e8b57;
@@ -73,26 +102,22 @@
 </head>
 <body>
   <header>
+    <button class="back-btn" onclick="window.history.back()">&larr; Back</button>
     <h1>Community Fridge</h1>
-    <nav>
-      <a href="/">Home</a>
-      <a href="about">About Us</a>
-      <a href="contact">Contact Us</a>
-    </nav>
   </header>
 
   <main>
     <!-- Volunteer Section -->
-  <section class="sections" id="volunteer">
-    <h2>Volunteer with Us</h2>
-    <p>Help deliver food and assist in maintaining the community fridge. View schedules and food reservations to ensure the smooth running of operations.</p>
-    <ul>
-        <li><a href="manageinventory">Manage Fridge Inventory</a></li>
-        <li><a href="managereservations">See List of Food Reservations</a></li>
-        <li><a href="sendnotifications">Send Notifications</a></li>
-    </ul>
-</section>
-</main>
+    <section class="sections" id="volunteer">
+      <h2>Volunteer with Us</h2>
+      <p>Help deliver food and assist in maintaining the community fridge. View schedules and food reservations to ensure the smooth running of operations.</p>
+      <ul class="volunteer-menu">
+        <li class="volunteer-item"><a href="manageinventory">Manage Fridge Inventory</a></li>
+        <li class="volunteer-item"><a href="managereservations">See List of Food Reservations</a></li>
+        <li class="volunteer-item"><a href="sendnotifications">Send Notifications</a></li>
+      </ul>
+    </section>
+  </main>
 
   <footer>
     <p>&copy; 2025 Community Fridge. All rights reserved.</p>

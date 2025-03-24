@@ -29,6 +29,24 @@
       text-decoration: none;
       font-size: 1.1em;
     }
+    header .back-btn {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      background: linear-gradient(90deg, #2e8b57 0%, #3cb371 100%);
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 1em;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    header .back-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    }
     main {
       padding: 40px 20px;
       max-width: 900px;
@@ -78,15 +96,6 @@
       background-color: #d9534f;
       color: white;
     }
-    .back-link {
-      text-align: center;
-      margin-top: 20px;
-    }
-    .back-link a {
-      text-decoration: none;
-      color: #2e8b57;
-      font-weight: bold;
-    }
     footer {
       background-color: #2e8b57;
       color: white;
@@ -101,12 +110,8 @@
 </head>
 <body>
   <header>
+    <button class="back-btn" onclick="window.history.back()">&larr; Back</button>
     <h1>Community Fridge</h1>
-    <nav>
-      <a href="/">Home</a>
-      <a href="about">About Us</a>
-      <a href="contact">Contact Us</a>
-    </nav>
   </header>
   <main>
     <h2>Food Reservations</h2>
@@ -157,9 +162,6 @@
         </tr>
       </tbody>
     </table>
-    <div class="back-link">
-      <a href="volunteer">&larr; Back to Volunteer</a>
-    </div>
   </main>
   <footer>
     <p>&copy; 2025 Community Fridge. All rights reserved.</p>

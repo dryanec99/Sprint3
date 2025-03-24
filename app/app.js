@@ -69,7 +69,14 @@ app.get("/managereservations", function(req, res) {
 app.get("/sendnotifications", function(req, res) {
   res.sendFile(path.join (__dirname, "..", "frontend", "sendnotifications.html"));
 });
-
+//Dynamic route for the "contact" page
+app.get("/contact", function(req, res) {
+  res.sendFile(path.join (__dirname, "..", "frontend", "contact.html"));
+});
+//Dynamic route for the "about" page
+app.get("/about", function(req, res) {
+  res.sendFile(path.join (__dirname, "..", "frontend", "about.html"));
+});
 
 // Start server on port 3000
 app.listen(3000,function(){

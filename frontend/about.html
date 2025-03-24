@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Donate Food - Community Fridge</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us - Community Fridge</title>
   <style>
+    /* Global Styles */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -23,13 +24,22 @@
       margin: 0;
       font-size: 2.5em;
     }
-    header nav a {
+    nav {
+      margin-top: 15px;
+      text-align: center;
+    }
+    nav a {
       color: white;
       margin: 0 15px;
       text-decoration: none;
       font-size: 1.1em;
+      padding: 8px 16px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
     }
-    /* Back Arrow Button */
+    nav a:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
     header .back-btn {
       position: absolute;
       left: 20px;
@@ -50,75 +60,46 @@
     }
     main {
       padding: 40px 20px;
+      max-width: 800px;
+      margin: 0 auto;
     }
-    .sections {
-      margin-bottom: 60px;
+    .about-section {
       text-align: center;
+      margin-bottom: 40px;
     }
-    .sections h2 {
+    .about-section h2 {
       font-size: 2em;
       margin-bottom: 20px;
     }
-    .sections p {
+    .about-section p {
       font-size: 1.2em;
+      line-height: 1.6;
       margin-bottom: 20px;
-    }
-    /* New Recipient Menu Styles */
-    .recipient-menu {
-      list-style: none;
-      padding: 0;
-      margin: 20px auto;
-      max-width: 600px;
-    }
-    .recipient-item {
-      margin-bottom: 15px;
-    }
-    .recipient-item a {
-      display: block;
-      text-decoration: none;
-      padding: 15px;
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      color: #2e8b57;
-      font-weight: bold;
-      text-align: center;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    }
-    .recipient-item a:hover {
-      background-color: #f2f2f2;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     footer {
       background-color: #2e8b57;
       color: white;
       text-align: center;
       padding: 15px;
+      bottom: 0;
       position: fixed;
       width: 100%;
-      bottom: 0;
     }
   </style>
 </head>
 <body>
   <header>
-    <button class="back-btn" onclick="window.history.back()">&larr; Back</button>
     <h1>Community Fridge</h1>
+    <button class="back-btn" onclick="window.history.back()">&larr; Back</button>
   </header>
-
   <main>
-    <!-- Food Recipient Section -->
-    <section class="sections" id="receive">
-      <h2>Food Recipient</h2>
-      <p>If you are looking for food, you can see the food available in multiple community fridge locations, reserve the food, and pick it up.</p>
-      <ul class="recipient-menu">
-        <li class="recipient-item"><a href="viewfood">View Available Food</a></li>
-        <li class="recipient-item"><a href="reservefood">Reserve Food</a></li>
-        <li class="recipient-item"><a href="reservations">Reservations</a></li>
-      </ul>
+    <section class="about-section">
+      <h2>About Us</h2>
+      <p>Welcome to Community Fridge! We are a dedicated group of university students who are passionate about making a positive impact in our community. As part of our group project, we have developed this platform to connect donors, food recipients, and volunteers to reduce food waste and support those in need.</p>
+      <p>Our project reflects our commitment to social responsibility, sustainability, and innovation. Through this collaborative effort, we aim to create a transparent, efficient, and supportive system that empowers everyone to contribute to a better community.</p>
+      <p>Thank you for joining us on this journey. Together, we can make a real difference!</p>
     </section>
   </main>
-
   <footer>
     <p>&copy; 2025 Community Fridge. All rights reserved.</p>
   </footer>
