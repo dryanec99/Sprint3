@@ -1,44 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Donate Food</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Donate Food - Community Fridge</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
     }
     header {
       background-color: #2e8b57;
       color: white;
-      padding: 15px 0;
+      padding: 20px 0;
       text-align: center;
       position: relative;
     }
     header h1 {
       margin: 0;
+      font-size: 2.5em;
     }
     header nav a {
       color: white;
-      margin: 0 10px;
+      margin: 0 15px;
       text-decoration: none;
+      font-size: 1.1em;
     }
     main {
-      padding: 20px;
+      padding: 40px 20px;
     }
     .sections {
-      margin-bottom: 50px;
+      margin-bottom: 60px;
+      text-align: center;
+    }
+    .sections h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    .sections p {
+      font-size: 1.2em;
+      margin-bottom: 20px;
     }
     .sections ul {
       list-style-type: none;
       padding: 0;
+      max-width: 600px;
+      margin: 0 auto;
     }
     .sections li {
-      padding: 10px;
+      padding: 15px;
       background-color: #f2f2f2;
-      margin: 5px 0;
+      margin: 10px 0;
       border-radius: 5px;
+      transition: background-color 0.3s ease;
     }
     .sections li:hover {
       background-color: #e0e0e0;
@@ -55,32 +72,30 @@
   </style>
 </head>
 <body>
+  <header>
+    <h1>Community Fridge</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="about">About Us</a>
+      <a href="contact">Contact Us</a>
+    </nav>
+  </header>
 
-<header>
-  <h1>Community Fridge</h1>
-  <nav>
-    <a href="/">Home</a>
-    <a href="/about">About Us</a>
-    <a href="/contact">Contact Us</a>
-  </nav>
-</header>
+  <main>
+    <!-- Donate Food Section -->
+    <section class="sections" id="donate">
+      <h2>Donate Food</h2>
+      <p>Register as a restaurant or individual donor to help supply the community fridge with nutritious food.</p>
+      <ul>
+        <li><a href="guidelines">Review Donation Guidelines</a></li>
+        <li><a href="donationform">List Food for Donation</a></li>
+        <li><a href="#">Track Your Donation History</a></li>
+      </ul>
+    </section>
+  </main>
 
-<main>
-  <!-- Donate Food Section -->
-  <section class="sections" id="donate">
-    <h2>Donate Food</h2>
-    <p>Register as a restaurant or individual donor to help supply the community fridge with nutritious food.</p>
-    <ul>
-      <li><a href="#">Register to Donate</a></li>
-      <li><a href="#">List Food for Donation</a></li>
-      <li><a href="#">Track Your Donation History</a></li>
-    </ul>
-  </section>
-</main>
-
-<footer>
-  <p>&copy; 2025 Community Fridge. All rights reserved.</p>
-</footer>
-
+  <footer>
+    <p>&copy; 2025 Community Fridge. All rights reserved.</p>
+  </footer>
 </body>
 </html>

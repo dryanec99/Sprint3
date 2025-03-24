@@ -29,6 +29,18 @@ app.get("/receive", function(req, res) {
 app.get("/volunteer", function(req, res) {
     res.sendFile(path.join (__dirname, "..", "frontend", "volunteer.html"));
 });
+//Dynamic route for the "login" page
+app.get("/login", function(req, res) {
+  res.sendFile(path.join (__dirname, "..", "frontend", "login.html"));
+});
+//Dynamic route for the "guidelines" page
+app.get("/guidelines", function(req, res) {
+  res.sendFile(path.join (__dirname, "..", "frontend", "guidelines.html"));
+});
+//Dynamic route for the "donationform" page
+app.get("/donationform", function(req, res) {
+  res.sendFile(path.join (__dirname, "..", "frontend", "donationform.html"));
+});
 
 // Start server on port 3000
 app.listen(3000,function(){
