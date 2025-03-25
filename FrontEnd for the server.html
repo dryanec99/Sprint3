@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Available Food - Community Fridge</title>
+  <link rel="stylesheet" href="/styles.css"> <!-- Link to the external CSS file -->
+</head>
+<body>
+  <header>
+    <h1>Community Fridge</h1>
+  </header>
+  <main>
+    <h2>Available Food for Collection</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Food Item</th>
+          <th>Category</th>
+          <th>Quantity</th>
+          <th>Expiration Date</th>
+          <th>Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% availableFood.forEach(function(food) { %>
+          <tr>
+            <td><%= food.item %></td>
+            <td><%= food.category %></td>
+            <td><%= food.quantity %></td>
+            <td><%= food.expirationDate %></td>
+            <td><%= food.location %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>
