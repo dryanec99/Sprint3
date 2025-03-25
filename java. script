@@ -1,0 +1,199 @@
+document.addEventListener('DOMContentLoaded', function() {
+    // DOM Elements
+    const requestBtns = document.querySelectorAll('.request-btn');
+    const requestModal = document.getElementById('request-modal');
+    const closeModal = document.querySelector('.close');
+    const closeConfirmation = document.querySelector('.close-confirmation');
+    const confirmationModal = document.getElementById('confirmation-modal');
+    const foodDonationForm = document.getElementById('food-donation-form');
+    const financialDonationForm = document.getElementById('financial-donation-form');
+    const volunteerForm = document.getElementById('volunteer-form');
+    const assistanceForm = document.getElementById('assistance-form');
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+    
+    // Modal functionality
+    function openModal(modal) {
+        modal.style.display = 'block';
+    }
+    
+    function closeModalFunc(modal) {
+        modal.style.display = 'none';
+    }
+    
+    // Event listeners for request buttons
+    requestBtns.forEach(btn => {
+        btn.addEventListener('click', () => openModal(requestModal));
+    });
+    
+    // Close modals
+    closeModal.addEventListener('click', () => {
+        closeModalFunc(requestModal);
+    });
+    
+    closeConfirmation.addEventListener('click', () => {
+        closeModalFunc(confirmationModal);
+    });
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+        if (e.target === requestModal) {
+            closeModalFunc(requestModal);
+        }
+        if (e.target === confirmationModal) {
+            closeModalFunc(confirmationModal);
+        }
+    });
+    
+    // Form submissions
+    if (foodDonationForm) {
+        foodDonationForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const foodType = document.getElementById('food-type').value;
+            const quantity = document.getElementById('quantity').value;
+            const dropoff = document.getElementById('dropoff').value;
+            
+            // In a real app, you would send this data to a server
+            console.log('Food Donation Submitted:', { foodType, quantity, dropoff });
+            
+            // Update donation stats
+            updateDonationStats(parseInt(quantity));
+            
+            // Show confirmation
+            document.getElementById('confirmation-message').textContent = 
+                `Thank you for your donation of ${quantity} lbs of ${foodType}! We'll contact you about drop-off at ${dropoff}.`;
+            openModal(confirmationModal);
+            
+            // Reset form
+            foodDonationForm.reset();
+        });
+    }
+    
+    if (financialDonationForm) {
+        financialDonationForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('amount').value);
+            const frequency = document.getElementById('frequency').value;
+            
+            // In a real app, you would send this data to a payment processor
+            console.log('Financial Donation Submitted:', { amount, frequency });
+            
+            // Update donation meter
+            updateDonationMeter(amount);
+            
+            // Show confirmation
+            document.getElementById('confirmation-message').textContent = 
+                `Thank you for your ${frequency} donation of $${amount.toFixed(2)}!`;
+            openModal(confirmationModal);
+            
+            // Reset form
+            financialDonationForm.reset();
+        });
+    }
+    
+    if (volunteerForm) {
+        volunteerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const interest = document.getElementById('interest').value;
+            const availability = document.getElementById('availability').value;
+            
+            // In a real app, you would send this data to a server
+            console.log('Volunteer Form Submitted:', { name, email, phone, interest, availability });
+            
+            // Update volunteer count
+            updateVolunteerCount();
+            
+            // Show confirmation
+            document.getElementById('confirmation-message').textContent = 
+                `Thank you, ${name}, for signing up to volunteer! We'll contact you soon about ${interest} opportunities.`;
+            openModal(confirmationModal);
+            
+            // Reset form
+            volunteerForm.reset();
+        });
+    }
+    
+    if (assistanceForm) {
+        assistanceForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('request-name').value;
+            const address = document.getElementById('request-address').value;
+            const phone = document.getElementById('request-phone').value;
+            const householdSize = document.getElementById('household-size').value;
+            const serviceNeeded = document.getElementById('service-needed').value;
+            
+            // In a real app, you would send this data to a server
+            console.log('Assistance Request Submitted:', { 
+                name, address, phone, householdSize, serviceNeeded 
+            });
+            
+            // Update families served count
+            updateFamiliesServed();
+            
+            // Show confirmation
+            document.getElementById('confirmation-message').textContent = 
+                `Thank you, ${name}. Your request for ${serviceNeeded} assistance has been received. We'll contact you within 2 business days.`;
+            openModal(confirmationModal);
+            
+            // Close request modal and reset form
+            closeModalFunc(requestModal);
+            assistanceForm.reset();
+        });
+    }
+    
+    // Stats update functions
+    function updateDonationStats(pounds) {
+        // In a real app, this would update the database
+        const mealsProvided = document.getElementById('meals-provided');
+        const currentMeals = parseInt(mealsProvided.textContent.replace(/[^0-9]/g, ''));
+        const newMeals = currentMeals + Math.floor(pounds / 1.2); // approx 1.2 lbs per meal
+        mealsProvided.textContent = `${newMeals.toLocaleString()}+`;
+    }
+    
+    function updateDonationMeter(amount) {
+        // Current progress is 61% ($15,250 of $25,000)
+        const currentAmount = 15250;
+        const newAmount = currentAmount + amount;
+        const goal = 25000;
+        const newPercentage = Math.min((newAmount / goal) * 100, 100);
+        
+        // Update progress bar
+        progressBar.style.width = `${newPercentage}%`;
+        progressText.textContent = `$${newAmount.toLocaleString()} raised (${Math.round(newPercentage)}%)`;
+    }
+    
+    function updateVolunteerCount() {
+        const volunteerCount = document.getElementById('volunteers');
+        const currentCount = parseInt(volunteerCount.textContent.replace(/[^0-9]/g, ''));
+        volunteerCount.textContent = `${currentCount + 1}+`;
+    }
+    
+    function updateFamiliesServed() {
+        const familiesServed = document.getElementById('families-served');
+        const currentCount = parseInt(familiesServed.textContent.replace(/[^0-9]/g, ''));
+        familiesServed.textContent = `${currentCount + 1}+`;
+    }
+    
+    // Smooth scrolling for navigation
+    document.querySelectorAll('nav a').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 70,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+    
+    // Initialize donation meter
+    updateDonationMeter(0);
+});
