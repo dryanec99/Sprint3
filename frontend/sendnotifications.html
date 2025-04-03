@@ -111,7 +111,7 @@
     <h1>Community Fridge</h1>
   </header>
   <main>
-    <form action="sendNotificationProcess.php" method="POST">
+    <form id="notificationForm">
       <h2>Send Notification</h2>
       
       <label for="subject">Notification Subject:</label>
@@ -135,50 +135,8 @@
   <footer>
     <p>&copy; 2025 Community Fridge. All rights reserved.</p>
   </footer>
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const form = document.querySelector("form");
-      
-      form.addEventListener("submit", function(e) {
-        e.preventDefault(); // Prevent the default form submission
-    
-        const subject = document.getElementById("subject").value.trim();
-        const message = document.getElementById("message").value.trim();
-        const audience = document.getElementById("audience").value;
-    
-        // Basic client-side validation
-        if (!subject || !message || !audience) {
-          alert("Please fill in all fields.");
-          return;
-        }
-        
-        // Prepare data to send
-        const data = { subject, message, audience };
-    
-        // Send data to the backend using fetch API (AJAX)
-        fetch("sendNotificationProcess.php", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            alert("Notification sent successfully!");
-            form.reset(); // Reset the form fields
-          } else {
-            alert("Error sending notification: " + result.error);
-          }
-        })
-        .catch(error => {
-          console.error("Error:", error);
-          alert("An error occurred while sending the notification.");
-        });
-      });
-    });
-    </script>
-    
+  
+  <!-- Include JavaScript file -->
+  <script src="../notifications.js"></script>
 </body>
 </html>

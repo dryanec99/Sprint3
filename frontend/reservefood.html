@@ -121,7 +121,7 @@
 </header>
 
 <main>
-  <form action="reserveFoodProcess.php" method="POST">
+  <form id="reservationForm">
     <h2>Reserve Food</h2>
 
     <!-- Pickup Location (Dropdown) -->
@@ -166,58 +166,9 @@
   <p>&copy; 2025 Community Fridge. All rights reserved.</p>
 </footer>
 
-<script>
- // Get the location select element
-const pickupLocation = document.getElementById('pickupLocation');
-const foodCategory = document.getElementById('foodCategory');
-const foodItem = document.getElementById('foodItem');
-
-// When the location changes, fetch the categories for that location
-pickupLocation.addEventListener('change', function() {
-  const locationId = this.value;
-
-  // Clear the food category and food item dropdowns
-  foodCategory.innerHTML = "<option value=''>Select Category</option>";
-  foodItem.innerHTML = "<option value=''>Select Food Item</option>";
-
-  if (locationId) {
-    fetch('get_categories.php?location_id=' + locationId)
-      .then(response => response.json())
-      .then(data => {
-        // Populate food categories
-        data.forEach(category => {
-          const option = document.createElement("option");
-          option.value = category.id;
-          option.textContent = category.category_name;
-          foodCategory.appendChild(option);
-        });
-      });
-  }
-});
-
-// When the category changes, fetch the food items for that category
-foodCategory.addEventListener('change', function() {
-  const categoryId = this.value;
-
-  // Clear the food item dropdown
-  foodItem.innerHTML = "<option value=''>Select Food Item</option>";
-
-  if (categoryId) {
-    fetch('get_food_items.php?category_id=' + categoryId)
-      .then(response => response.json())
-      .then(data => {
-        // Populate food items
-        data.forEach(item => {
-          const option = document.createElement("option");
-          option.value = item.id;
-          option.textContent = item.food_name;
-          foodItem.appendChild(option);
-        });
-      });
-  }
-});
-
-</script>
+<!-- Include JavaScript files -->
+<script src="../reservations.js"></script>
+<script src="../reserve-food.js"></script>
 
 </body>
 </html>

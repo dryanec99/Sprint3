@@ -164,43 +164,13 @@
         </tr>
       </thead>
       <tbody>
-        <!-- Sample data; replace with dynamic content as needed -->
-        <tr>
-          <td>Fresh Apples</td>
-          <td>Fruits</td>
-          <td>50 kg</td>
-          <td>2025-03-15</td>
-          <td class="action-buttons">
-            <button class="edit-btn">Edit</button>
-            <button class="delete-btn">Delete</button>
-          </td>
-        </tr>
-        <tr>
-          <td>Organic Carrots</td>
-          <td>Vegetables</td>
-          <td>30 kg</td>
-          <td>2025-03-20</td>
-          <td class="action-buttons">
-            <button class="edit-btn">Edit</button>
-            <button class="delete-btn">Delete</button>
-          </td>
-        </tr>
-        <tr>
-          <td>Canned Beans</td>
-          <td>Canned Goods</td>
-          <td>100 cans</td>
-          <td>2026-01-10</td>
-          <td class="action-buttons">
-            <button class="edit-btn">Edit</button>
-            <button class="delete-btn">Delete</button>
-          </td>
-        </tr>
+        <!-- Table content will be populated by JavaScript -->
       </tbody>
     </table>
 
     <!-- Form to Add New Inventory Item -->
     <h3>Add New Inventory Item</h3>
-    <form action="addInventoryItem.php" method="POST">
+    <form id="inventoryForm">
       <label for="itemName">Item Name:</label>
       <input type="text" id="itemName" name="itemName" placeholder="Enter item name" required>
 
@@ -228,5 +198,8 @@
   <footer>
     <p>&copy; 2025 Community Fridge. All rights reserved.</p>
   </footer>
+  
+  <!-- Include JavaScript file -->
+  <script src="../inventory.js"></script>
 </body>
 </html>
