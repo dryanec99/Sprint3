@@ -68,11 +68,11 @@
       margin: 10px 0 5px;
       font-weight: bold;
     }
+    form select,
     form input[type="text"],
     form input[type="number"],
     form input[type="date"],
     form input[type="email"],
-    form select,
     form textarea {
       width: 100%;
       padding: 10px;
@@ -111,23 +111,6 @@
       border-radius: 5px;
       border: 1px solid #ddd;
     }
-    .autocomplete-suggestions {
-      background-color: #fff;
-      border: 1px solid #ddd;
-      max-height: 150px;
-      overflow-y: auto;
-      position: absolute;
-      z-index: 9999;
-      width: 100%;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    .autocomplete-suggestion {
-      padding: 8px;
-      cursor: pointer;
-    }
-    .autocomplete-suggestion:hover {
-      background-color: #f1f1f1;
-    }
   </style>
 </head>
 <body>
@@ -141,10 +124,23 @@
   <form action="reserveFoodProcess.php" method="POST">
     <h2>Reserve Food</h2>
 
-    <!-- Food Item with Autocomplete -->
+    <!-- Pickup Location (Dropdown) -->
+    <label for="pickupLocation">Pickup Location:</label>
+    <select id="pickupLocation" name="pickupLocation" required>
+      <option value="">Select Location</option>
+    </select>
+
+    <!-- Food Category (Dropdown) -->
+    <label for="foodCategory">Food Category:</label>
+    <select id="foodCategory" name="foodCategory" required>
+      <option value="">Select Category</option>
+    </select>
+
+    <!-- Food Item (Dropdown) -->
     <label for="foodItem">Food Item:</label>
-    <input type="text" id="foodItem" name="foodItem" placeholder="Enter or select a food item" required autocomplete="off">
-    <div id="foodItemSuggestions" class="autocomplete-suggestions"></div>
+    <select id="foodItem" name="foodItem" required>
+      <option value="">Select Food Item</option>
+    </select>
 
     <!-- Quantity Needed -->
     <label for="quantity">Quantity Needed:</label>
@@ -153,15 +149,6 @@
     <!-- Preferred Pickup Date -->
     <label for="pickupDate">Preferred Pickup Date:</label>
     <input type="date" id="pickupDate" name="pickupDate" required>
-
-    <!-- Pickup Location (Dropdown) -->
-    <label for="pickupLocation">Pickup Location:</label>
-    <select id="pickupLocation" name="pickupLocation" required>
-      <option value="">Select Location</option>
-      <option value="Location 1">Location 1</option>
-      <option value="Location 2">Location 2</option>
-      <option value="Location 3">Location 3</option>
-    </select>
 
     <!-- Contact Information -->
     <label for="contactInfo">Contact Information:</label>
@@ -180,48 +167,56 @@
 </footer>
 
 <script>
-  // Dummy list of food items for the autocomplete
-  const foodItems = [
-    "Apple",
-    "Banana",
-    "Carrot",
-    "Spinach",
-    "Tomato",
-    "Bread",
-    "Rice",
-    "Chicken",
-    "Eggs",
-    "Milk"
-  ];
+ // Get the location select element
+const pickupLocation = document.getElementById('pickupLocation');
+const foodCategory = document.getElementById('foodCategory');
+const foodItem = document.getElementById('foodItem');
 
-  const foodInput = document.getElementById("foodItem");
-  const suggestionsContainer = document.getElementById("foodItemSuggestions");
+// When the location changes, fetch the categories for that location
+pickupLocation.addEventListener('change', function() {
+  const locationId = this.value;
 
-  // Autocomplete function for food items
-  foodInput.addEventListener("input", function() {
-    const query = this.value.toLowerCase();
-    suggestionsContainer.innerHTML = "";
-    if (query) {
-      const filteredItems = foodItems.filter(item => item.toLowerCase().includes(query));
-      filteredItems.forEach(item => {
-        const suggestion = document.createElement("div");
-        suggestion.classList.add("autocomplete-suggestion");
-        suggestion.textContent = item;
-        suggestion.addEventListener("click", () => {
-          foodInput.value = item;
-          suggestionsContainer.innerHTML = ""; // Clear suggestions after selection
+  // Clear the food category and food item dropdowns
+  foodCategory.innerHTML = "<option value=''>Select Category</option>";
+  foodItem.innerHTML = "<option value=''>Select Food Item</option>";
+
+  if (locationId) {
+    fetch('get_categories.php?location_id=' + locationId)
+      .then(response => response.json())
+      .then(data => {
+        // Populate food categories
+        data.forEach(category => {
+          const option = document.createElement("option");
+          option.value = category.id;
+          option.textContent = category.category_name;
+          foodCategory.appendChild(option);
         });
-        suggestionsContainer.appendChild(suggestion);
       });
-    }
-  });
+  }
+});
 
-  // Close suggestions when clicking outside
-  document.addEventListener("click", function(event) {
-    if (!foodInput.contains(event.target)) {
-      suggestionsContainer.innerHTML = "";
-    }
-  });
+// When the category changes, fetch the food items for that category
+foodCategory.addEventListener('change', function() {
+  const categoryId = this.value;
+
+  // Clear the food item dropdown
+  foodItem.innerHTML = "<option value=''>Select Food Item</option>";
+
+  if (categoryId) {
+    fetch('get_food_items.php?category_id=' + categoryId)
+      .then(response => response.json())
+      .then(data => {
+        // Populate food items
+        data.forEach(item => {
+          const option = document.createElement("option");
+          option.value = item.id;
+          option.textContent = item.food_name;
+          foodItem.appendChild(option);
+        });
+      });
+  }
+});
+
 </script>
 
 </body>

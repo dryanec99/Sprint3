@@ -24,9 +24,11 @@
       border-radius: 10px;
       box-shadow: 0 10px 20px rgba(0,0,0,0.2);
       overflow: hidden;
+      padding: 20px;
     }
     .tab-header {
       display: flex;
+      border-bottom: 2px solid #2e8b57;
     }
     .tab-header button {
       flex: 1;
@@ -37,10 +39,12 @@
       outline: none;
       font-size: 1.1em;
       transition: background 0.3s;
+      border-bottom: 2px solid transparent;
     }
     .tab-header button.active {
       background: #2e8b57;
       color: #fff;
+      border-bottom: 2px solid #fff;
     }
     .form-content {
       padding: 30px;
@@ -52,25 +56,38 @@
     form.active {
       display: flex;
     }
-    form input, form textarea {
-      padding: 12px;
+    form input, form textarea, form select {
+      padding: 14px;
       margin-bottom: 20px;
       border: 1px solid #ccc;
-      border-radius: 5px;
+      border-radius: 10px;
       font-size: 1em;
+      transition: border 0.3s;
+    }
+    form input:focus, form select:focus, form textarea:focus {
+      border-color: #3cb371;
+      outline: none;
+    }
+    form input::placeholder, form textarea::placeholder {
+      color: #999;
     }
     form button {
-      padding: 12px;
+      padding: 14px;
       background: #2e8b57;
       border: none;
-      border-radius: 5px;
+      border-radius: 10px;
       color: #fff;
-      font-size: 1em;
+      font-size: 1.2em;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background 0.3s, transform 0.3s;
+      width: 100%;
     }
     form button:hover {
-      background: #3cb371;
+      background-color: #3cb371;
+      transform: scale(1.05);
+    }
+    form button:active {
+      transform: scale(0.98);
     }
     .footer-link {
       text-align: center;
@@ -81,28 +98,28 @@
       color: #2e8b57;
       text-decoration: none;
     }
-    /* Enhanced Volunteer Button */
-    .volunteer-btn {
-      margin-top: 30px;
-      padding: 14px;
-      background: linear-gradient(135deg, #2e8b57, #3cb371);
-      color: white;
-      border: none;
-      border-radius: 30px;  /* Round the corners */
-      cursor: pointer;
-      text-align: center;
-      font-size: 1.2em;
-      width: 100%;
-      transition: background-color 0.3s ease, transform 0.3s ease;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    .volunteer-form {
+      display: none;
     }
-    .volunteer-btn:hover {
-      background-color: #3cb371;
-      transform: scale(1.05);  /* Slight hover effect to make the button feel more interactive */
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    .form-helper-text {
+      font-size: 0.9em;
+      color: #888;
     }
-    .volunteer-btn:focus {
-      outline: none;
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      font-size: 1.1em;
+    }
+    /* Enhance select box appearance */
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-color: #f9f9f9;
+      background-image: url('data:image/svg+xml,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22%3e%3cpath d=%22M5 7l5 5 5-5%22/%3e%3c/svg%3e');
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 12px;
     }
   </style>
 </head>
@@ -123,24 +140,31 @@
 
     <!-- Sign Up Form -->
     <form id="signupForm" action="signupProcess.php" method="POST">
-      <input type="email" name="email" placeholder="Email" required />
-      <input type="text" name="newUsername" placeholder="Username" required />
-      <input type="password" name="newPassword" placeholder="Password" required />
+      <label for="userType">Select User Type:</label>
+      <select id="userType" name="userType" required>
+        <option value="">Select Type</option>
+        <option value="donor">Donor</option>
+        <option value="recipient">Recipient</option>
+        <option value="volunteer">Volunteer</option>
+      </select>
+
+      <div id="signupDetails">
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="text" name="newUsername" placeholder="Username" required />
+        <input type="password" name="newPassword" placeholder="Password" required />
+        <div class="form-helper-text">Password must be at least 8 characters long</div>
+      </div>
+
+      <!-- Volunteer Application Form (Hidden by default) -->
+      <div id="volunteerForm" class="volunteer-form">
+        <input type="text" name="fullName" placeholder="Full Name" required />
+        <textarea name="whyVolunteer" placeholder="Why do you want to volunteer?" rows="5" required></textarea>
+        <input type="text" name="availability" placeholder="Availability (e.g., weekends, evenings)" required />
+        <textarea name="skills" placeholder="Relevant Skills or Experience" rows="5"></textarea>
+      </div>
+
       <button type="submit">Sign Up</button>
     </form>
-
-    <!-- Volunteer Application Form -->
-    <form id="volunteerForm" action="volunteerApplicationProcess.php" method="POST">
-      <input type="text" name="fullName" placeholder="Full Name" required />
-      <input type="email" name="email" placeholder="Your Email" required />
-      <textarea name="whyVolunteer" placeholder="Why do you want to volunteer?" rows="5" required></textarea>
-      <input type="text" name="availability" placeholder="Availability (e.g., weekends, evenings)" required />
-      <textarea name="skills" placeholder="Relevant Skills or Experience" rows="5"></textarea>
-      <button type="submit">Submit Application</button>
-    </form>
-
-    <!-- Button to show the Volunteer Form -->
-    <button id="volunteerBtn" class="volunteer-btn">Apply to be a Volunteer</button>
 
     <div class="footer-link">
       <a href="/">Back to Home</a>
@@ -154,8 +178,9 @@
   const signupTab = document.getElementById("signupTab");
   const loginForm = document.getElementById("loginForm");
   const signupForm = document.getElementById("signupForm");
+  const signupDetails = document.getElementById("signupDetails");
   const volunteerForm = document.getElementById("volunteerForm");
-  const volunteerBtn = document.getElementById("volunteerBtn");
+  const userType = document.getElementById("userType");
 
   loginTab.addEventListener("click", () => {
     loginTab.classList.add("active");
@@ -163,7 +188,6 @@
     loginForm.classList.add("active");
     signupForm.classList.remove("active");
     volunteerForm.classList.remove("active");  // Hide volunteer form when login tab is active
-    volunteerBtn.style.display = 'block'; // Show the button again when the login form is shown
   });
 
   signupTab.addEventListener("click", () => {
@@ -172,24 +196,16 @@
     signupForm.classList.add("active");
     loginForm.classList.remove("active");
     volunteerForm.classList.remove("active");  // Hide volunteer form when signup tab is active
-    volunteerBtn.style.display = 'block'; // Show the button again when the signup form is shown
   });
 
-  // Toggle visibility of login/signup forms and volunteer application form
-  volunteerBtn.addEventListener("click", () => {
-    // If the volunteer form is currently visible, hide it and show the login/signup forms
-    if (volunteerForm.classList.contains("active")) {
-      volunteerForm.classList.remove("active");
-      loginForm.classList.add("active");
-      signupForm.classList.add("active");
-      volunteerBtn.textContent = "Apply to be a Volunteer"; // Reset button text
-      volunteerBtn.style.display = 'block'; // Show the button again when the volunteer form is hidden
+  // Show volunteer form when "Volunteer" is selected in the dropdown
+  userType.addEventListener("change", () => {
+    if (userType.value === "volunteer") {
+      signupDetails.style.display = "none"; // Hide the original signup details
+      volunteerForm.style.display = "block"; // Show the volunteer form
     } else {
-      // If the volunteer form is not visible, show it and hide the login/signup forms
-      volunteerForm.classList.add("active");
-      loginForm.classList.remove("active");
-      signupForm.classList.remove("active");
-      volunteerBtn.style.display = 'none'; // Hide the button when volunteer form is visible
+      signupDetails.style.display = "block"; // Show the normal signup form
+      volunteerForm.style.display = "none"; // Hide the volunteer form
     }
   });
 </script>
