@@ -105,39 +105,124 @@
       padding: 20px;
       margin-top: 40px;
     }
+    /* Modernized UI */
+    select, input[type="text"], input[type="number"], input[type="email"], textarea {
+      font-size: 1em;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+    .autocomplete-suggestions {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      max-height: 150px;
+      overflow-y: auto;
+      position: absolute;
+      z-index: 9999;
+      width: 100%;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .autocomplete-suggestion {
+      padding: 8px;
+      cursor: pointer;
+    }
+    .autocomplete-suggestion:hover {
+      background-color: #f1f1f1;
+    }
   </style>
 </head>
 <body>
-  <header>
-    <button class="back-btn" onclick="window.history.back()">&larr; Back</button>
-    <h1>Community Fridge</h1>
-  </header>
-  <main>
-    <form action="reserveFoodProcess.php" method="POST">
-      <h2>Reserve Food</h2>
-      <label for="foodItem">Food Item:</label>
-      <input type="text" id="foodItem" name="foodItem" placeholder="Enter the food item name" required>
 
-      <label for="quantity">Quantity Needed:</label>
-      <input type="number" id="quantity" name="quantity" placeholder="Enter quantity" required>
-      
-      <label for="pickupDate">Preferred Pickup Date:</label>
-      <input type="date" id="pickupDate" name="pickupDate" required>
-      
-      <label for="pickupLocation">Pickup Location:</label>
-      <input type="text" id="pickupLocation" name="pickupLocation" placeholder="Enter pickup location" required>
-      
-      <label for="contactInfo">Contact Information:</label>
-      <input type="email" id="contactInfo" name="contactInfo" placeholder="Enter your email" required>
-      
-      <label for="additionalNotes">Additional Notes:</label>
-      <textarea id="additionalNotes" name="additionalNotes" placeholder="Any special instructions or requests"></textarea>
-      
-      <button type="submit">Submit Reservation</button>
-    </form>
-  </main>
-  <footer>
-    <p>&copy; 2025 Community Fridge. All rights reserved.</p>
-  </footer>
+<header>
+  <button class="back-btn" onclick="window.history.back()">&larr; Back</button>
+  <h1>Community Fridge</h1>
+</header>
+
+<main>
+  <form action="reserveFoodProcess.php" method="POST">
+    <h2>Reserve Food</h2>
+
+    <!-- Food Item with Autocomplete -->
+    <label for="foodItem">Food Item:</label>
+    <input type="text" id="foodItem" name="foodItem" placeholder="Enter or select a food item" required autocomplete="off">
+    <div id="foodItemSuggestions" class="autocomplete-suggestions"></div>
+
+    <!-- Quantity Needed -->
+    <label for="quantity">Quantity Needed:</label>
+    <input type="number" id="quantity" name="quantity" placeholder="Enter quantity" required>
+
+    <!-- Preferred Pickup Date -->
+    <label for="pickupDate">Preferred Pickup Date:</label>
+    <input type="date" id="pickupDate" name="pickupDate" required>
+
+    <!-- Pickup Location (Dropdown) -->
+    <label for="pickupLocation">Pickup Location:</label>
+    <select id="pickupLocation" name="pickupLocation" required>
+      <option value="">Select Location</option>
+      <option value="Location 1">Location 1</option>
+      <option value="Location 2">Location 2</option>
+      <option value="Location 3">Location 3</option>
+    </select>
+
+    <!-- Contact Information -->
+    <label for="contactInfo">Contact Information:</label>
+    <input type="email" id="contactInfo" name="contactInfo" placeholder="Enter your email" required>
+
+    <!-- Additional Notes -->
+    <label for="additionalNotes">Additional Notes:</label>
+    <textarea id="additionalNotes" name="additionalNotes" placeholder="Any special instructions or requests"></textarea>
+
+    <button type="submit">Submit Reservation</button>
+  </form>
+</main>
+
+<footer>
+  <p>&copy; 2025 Community Fridge. All rights reserved.</p>
+</footer>
+
+<script>
+  // Dummy list of food items for the autocomplete
+  const foodItems = [
+    "Apple",
+    "Banana",
+    "Carrot",
+    "Spinach",
+    "Tomato",
+    "Bread",
+    "Rice",
+    "Chicken",
+    "Eggs",
+    "Milk"
+  ];
+
+  const foodInput = document.getElementById("foodItem");
+  const suggestionsContainer = document.getElementById("foodItemSuggestions");
+
+  // Autocomplete function for food items
+  foodInput.addEventListener("input", function() {
+    const query = this.value.toLowerCase();
+    suggestionsContainer.innerHTML = "";
+    if (query) {
+      const filteredItems = foodItems.filter(item => item.toLowerCase().includes(query));
+      filteredItems.forEach(item => {
+        const suggestion = document.createElement("div");
+        suggestion.classList.add("autocomplete-suggestion");
+        suggestion.textContent = item;
+        suggestion.addEventListener("click", () => {
+          foodInput.value = item;
+          suggestionsContainer.innerHTML = ""; // Clear suggestions after selection
+        });
+        suggestionsContainer.appendChild(suggestion);
+      });
+    }
+  });
+
+  // Close suggestions when clicking outside
+  document.addEventListener("click", function(event) {
+    if (!foodInput.contains(event.target)) {
+      suggestionsContainer.innerHTML = "";
+    }
+  });
+</script>
+
 </body>
 </html>
