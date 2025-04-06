@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Available Food - Community Fridge</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background-color: #2e8b57;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+      position: relative;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+    header nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-size: 1.1em;
+    }
+    header .back-btn {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      background: linear-gradient(90deg, #2e8b57 0%, #3cb371 100%);
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 1em;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    header .back-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    }
+    main {
+      padding: 40px 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #2e8b57;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    footer {
+      background-color: #2e8b57;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+      bottom: 0;
+      width: 100%;
+      position: fixed;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="back-btn" onclick="window.history.back()">&larr; Back</button>
+    <h1>Community Fridge</h1>
+  </header>
+  <main>
+    <h2>Available Food for Collection</h2>
+    <p>Below is the current list of food items available for collection from our community fridges. Please review and reserve your desired items.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Food Item</th>
+          <th>Category</th>
+          <th>Quantity</th>
+          <th>Expiration Date</th>
+          <th>Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Sample Data; replace with dynamic content as needed -->
+        <tr>
+          <td>Fresh Apples</td>
+          <td>Fruits</td>
+          <td>20 kg</td>
+          <td>2025-03-15</td>
+          <td>Downtown Community Fridge</td>
+        </tr>
+        <tr>
+          <td>Organic Carrots</td>
+          <td>Vegetables</td>
+          <td>15 kg</td>
+          <td>2025-03-20</td>
+          <td>Eastside Community Fridge</td>
+        </tr>
+        <tr>
+          <td>Canned Beans</td>
+          <td>Canned Goods</td>
+          <td>50 cans</td>
+          <td>2026-01-10</td>
+          <td>Westside Community Fridge</td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+  <footer>
+    <p>&copy; 2025 Community Fridge. All rights reserved.</p>
+  </footer>
+</body>
+</html>
