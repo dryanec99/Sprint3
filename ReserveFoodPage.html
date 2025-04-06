@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reserve Food - Community Fridge</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background-color: #2e8b57;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+      position: relative;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+    header nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-size: 1.1em;
+    }
+    header .back-btn {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      background: linear-gradient(90deg, #2e8b57 0%, #3cb371 100%);
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 1em;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    header .back-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    }
+    main {
+      padding: 40px 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    form {
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    form h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    form label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: bold;
+    }
+    form select,
+    form input[type="text"],
+    form input[type="number"],
+    form input[type="date"],
+    form input[type="email"],
+    form textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+    form textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    form button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2e8b57;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    form button:hover {
+      background-color: #3cb371;
+    }
+    footer {
+      background-color: #2e8b57;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+    /* Modernized UI */
+    select, input[type="text"], input[type="number"], input[type="email"], textarea {
+      font-size: 1em;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <button class="back-btn" onclick="window.history.back()">&larr; Back</button>
+  <h1>Community Fridge</h1>
+</header>
+
+<main>
+  <form action="reserveFoodProcess.php" method="POST">
+    <h2>Reserve Food</h2>
+
+    <!-- Pickup Location (Dropdown) -->
+    <label for="pickupLocation">Pickup Location:</label>
+    <select id="pickupLocation" name="pickupLocation" required>
+      <option value="">Select Location</option>
+      <option value="Location 1">Location 1</option>
+      <option value="Location 2">Location 2</option>
+      <option value="Location 3">Location 3</option>
+    </select>
+
+    <!-- Category of Food (Dropdown) -->
+    <label for="foodCategory">Food Category:</label>
+    <select id="foodCategory" name="foodCategory" required>
+      <option value="">Select Category</option>
+    </select>
+
+    <!-- Food Item (Dropdown) -->
+    <label for="foodItem">Food Item:</label>
+    <select id="foodItem" name="foodItem" required>
+      <option value="">Select Food Item</option>
+    </select>
+
+    <!-- Quantity Needed -->
+    <label for="quantity">Quantity Needed:</label>
+    <input type="number" id="quantity" name="quantity" placeholder="Enter quantity" required>
+
+    <!-- Preferred Pickup Date -->
+    <label for="pickupDate">Preferred Pickup Date:</label>
+    <input type="date" id="pickupDate" name="pickupDate" required>
+
+    <!-- Contact Information -->
+    <label for="contactInfo">Contact Information:</label>
+    <input type="email" id="contactInfo" name="contactInfo" placeholder="Enter your email" required>
+
+    <!-- Additional Notes -->
+    <label for="additionalNotes">Additional Notes:</label>
+    <textarea id="additionalNotes" name="additionalNotes" placeholder="Any special instructions or requests"></textarea>
+
+    <button type="submit">Submit Reservation</button>
+  </form>
+</main>
+
+<footer>
+  <p>&copy; 2025 Community Fridge. All rights reserved.</p>
+</footer>
+
+<script>
+  // Simulated data for locations, categories, and food items
+  const data = {
+    "Location 1": {
+      "Fruits": ["Apple", "Banana", "Orange"],
+      "Vegetables": ["Carrot", "Spinach", "Tomato"],
+      "Dairy": ["Milk", "Cheese", "Yogurt"]
+    },
+    "Location 2": {
+      "Fruits": ["Grapes", "Pineapple", "Mango"],
+      "Vegetables": ["Lettuce", "Cucumber", "Broccoli"],
+      "Dairy": ["Butter", "Milk", "Cream"]
+    },
+    "Location 3": {
+      "Fruits": ["Peach", "Strawberry", "Blueberry"],
+      "Vegetables": ["Potato", "Onion", "Cabbage"],
+      "Dairy": ["Cheese", "Butter", "Milk"]
+    }
+  };
+
+  const pickupLocation = document.getElementById("pickupLocation");
+  const foodCategory = document.getElementById("foodCategory");
+  const foodItem = document.getElementById("foodItem");
+
+  // When location changes, update the categories
+  pickupLocation.addEventListener("change", function () {
+    const location = this.value;
+    foodCategory.innerHTML = "<option value=''>Select Category</option>";
+    foodItem.innerHTML = "<option value=''>Select Food Item</option>";
+
+    if (location && data[location]) {
+      // Populate categories based on location
+      const categories = Object.keys(data[location]);
+      categories.forEach(category => {
+        const option = document.createElement("option");
+        option.value = category;
+        option.textContent = category;
+        foodCategory.appendChild(option);
+      });
+    }
+  });
+
+  // When category changes, update the food items
+  foodCategory.addEventListener("change", function () {
+    const location = pickupLocation.value;
+    const category = this.value;
+    foodItem.innerHTML = "<option value=''>Select Food Item</option>";
+
+    if (location && category && data[location][category]) {
+      // Populate food items based on selected category
+      const items = data[location][category];
+      items.forEach(item => {
+        const option = document.createElement("option");
+        option.value = item;
+        option.textContent = item;
+        foodItem.appendChild(option);
+      });
+    }
+  });
+</script>
+
+</body>
+</html>
