@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Donation Form - Community Fridge</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #2e8b57;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 12px;
+      background-color: #2e8b57;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #3cb371;
+    }
+    .message {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    #userInfo {
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #e9ecef;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Simple Donation Form</h1>
+    
+    <div id="userInfo">
+      <h3>User Information</h3>
+      <div id="userInfoDisplay">Loading user information...</div>
+    </div>
+    
+    <form id="simpleDonationForm">
+      <input type="hidden" id="donorId" name="donorId">
+      
+      <label for="foodName">Food Name:</label>
+      <input type="text" id="foodName" name="foodName" required>
+      
+      <label for="category">Food Category:</label>
+      <select id="category" name="category" required>
+        <option value="">Select Category</option>
+        <option value="Fruits">Fruits</option>
+        <option value="Vegetables">Vegetables</option>
+        <option value="Dairy">Dairy</option>
+        <option value="Grains">Grains</option>
+        <option value="Other">Other</option>
+      </select>
+      
+      <label for="quantity">Quantity:</label>
+      <input type="number" id="quantity" name="quantity" required>
+      
+      <label for="expiration">Expiration Date:</label>
+      <input type="date" id="expiration" name="expiration" required>
+      
+      <label for="description">Food Description:</label>
+      <textarea id="description" name="description" rows="4"></textarea>
+      
+      <button type="submit">Submit Donation</button>
+    </form>
+    
+    <div id="resultMessage" class="message" style="display: none;"></div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Set default expiration date (7 days from now)
+      const today = new Date();
+      const nextWeek = new Date(today);
+      nextWeek.setDate(today.getDate() + 7);
+      document.getElementById('expiration').value = nextWeek.toISOString().split('T')[0];
+      
+      // Display user information
+      const userInfoDisplay = document.getElementById('userInfoDisplay');
+      const donorIdInput = document.getElementById('donorId');
+      
+      try {
+        // Try to get user data from localStorage
+        const userDataString = localStorage.getItem('userData');
+        console.log('Raw user data from localStorage:', userDataString);
+        
+        if (userDataString) {
+          const userData = JSON.parse(userDataString);
+          console.log('Parsed user data:', userData);
+          
+          if (userData && userData.id) {
+            userInfoDisplay.innerHTML = `
+              <p><strong>Name:</strong> ${userData.name || 'Not available'}</p>
+              <p><strong>Email:</strong> ${userData.email || 'Not available'}</p>
+              <p><strong>Role:</strong> ${userData.role || 'Not available'}</p>
+              <p><strong>ID:</strong> ${userData.id}</p>
+            `;
+            donorIdInput.value = userData.id;
+          } else {
+            userInfoDisplay.innerHTML = '<p class="error">User ID not found. Please log in again.</p>';
+          }
+        } else {
+          userInfoDisplay.innerHTML = '<p class="error">No user data found. Please log in.</p>';
+        }
+      } catch (error) {
+        console.error('Error displaying user info:', error);
+        userInfoDisplay.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+      }
+      
+      // Handle form submission
+      const form = document.getElementById('simpleDonationForm');
+      const resultMessage = document.getElementById('resultMessage');
+      
+      form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        // Get form values
+        const donorId = document.getElementById('donorId').value;
+        const foodName = document.getElementById('foodName').value;
+        const category = document.getElementById('category').value;
+        const quantity = document.getElementById('quantity').value;
+        const expiration = document.getElementById('expiration').value;
+        const description = document.getElementById('description').value;
+        
+        // Validate donor ID
+        if (!donorId) {
+          showMessage('Please log in to donate food.', 'error');
+          return;
+        }
+        
+        // Create donation data
+        const donationData = {
+          donor_id: parseInt(donorId, 10),
+          foodName,
+          category,
+          quantity: parseInt(quantity, 10),
+          expiration,
+          description
+        };
+        
+        console.log('Sending donation data:', donationData);
+        
+        try {
+          // Send donation data to server
+          const response = await fetch('/api/donations', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(donationData)
+          });
+          
+          console.log('Response status:', response.status);
+          
+          // Get response text
+          const responseText = await response.text();
+          console.log('Raw response:', responseText);
+          
+          // Parse JSON response
+          let data;
+          try {
+            data = responseText ? JSON.parse(responseText) : {};
+          } catch (e) {
+            console.error('Error parsing response:', e);
+            showMessage('Error parsing server response', 'error');
+            return;
+          }
+          
+          console.log('Parsed response data:', data);
+          
+          if (response.ok && data.success) {
+            showMessage('Thank you for your donation! Your food item has been added to our inventory.', 'success');
+            form.reset();
+            
+            // Set default expiration date again
+            document.getElementById('expiration').value = nextWeek.toISOString().split('T')[0];
+            
+            // Redirect after delay
+            setTimeout(() => {
+              window.location.href = '/donationhistory';
+            }, 2000);
+          } else {
+            showMessage('Error: ' + (data.error || 'Failed to submit donation'), 'error');
+          }
+        } catch (error) {
+          console.error('Fetch error:', error);
+          showMessage('Error: ' + error.message, 'error');
+        }
+      });
+      
+      // Helper function to show messages
+      function showMessage(message, type) {
+        resultMessage.textContent = message;
+        resultMessage.className = 'message ' + type;
+        resultMessage.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

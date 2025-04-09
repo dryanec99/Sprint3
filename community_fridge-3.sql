@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Mar 20, 2025 at 03:43 PM
+-- Generation Time: Apr 09, 2025 at 09:56 PM
 -- Server version: 9.2.0
 -- PHP Version: 8.2.27
 
@@ -24,6 +24,22 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `donations`
+--
+
+CREATE TABLE `donations` (
+  `donation_id` int NOT NULL,
+  `donor_id` int NOT NULL,
+  `food_name` varchar(100) NOT NULL,
+  `quantity` int NOT NULL,
+  `donation_date` date NOT NULL,
+  `expiry_date` date DEFAULT NULL,
+  `notes` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `food_items`
 --
 
@@ -35,6 +51,7 @@ CREATE TABLE `food_items` (
   `expirationDate` date NOT NULL,
   `status` enum('Available','Reserved','Collected') NOT NULL,
   `fridgeID` int NOT NULL,
+  `category` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -42,12 +59,12 @@ CREATE TABLE `food_items` (
 -- Dumping data for table `food_items`
 --
 
-INSERT INTO `food_items` (`foodID`, `donorID`, `name`, `quantity`, `expirationDate`, `status`, `fridgeID`, `created_at`) VALUES
-(1, 1, 'Apples', 10, '2025-04-10', 'Available', 1, '2025-03-11 15:49:02'),
-(2, 1, 'Milk', 5, '2025-03-28', 'Available', 2, '2025-03-11 15:49:02'),
-(3, 4, 'Rice', 20, '2025-06-15', 'Available', 3, '2025-03-11 15:49:02'),
-(4, 4, 'Chicken Breast', 8, '2025-04-05', 'Available', 1, '2025-03-11 15:49:02'),
-(5, 1, 'Canned Beans', 12, '2026-01-01', 'Available', 2, '2025-03-11 15:49:02');
+INSERT INTO `food_items` (`foodID`, `donorID`, `name`, `quantity`, `expirationDate`, `status`, `fridgeID`, `category`, `created_at`) VALUES
+(1, 1, 'Apples', 10, '2025-04-10', 'Available', 1, '', '2025-03-11 15:49:02'),
+(2, 1, 'Milk', 3, '2025-03-28', 'Available', 2, '', '2025-03-11 15:49:02'),
+(3, 4, 'Rice', 20, '2025-06-15', 'Available', 3, '', '2025-03-11 15:49:02'),
+(4, 4, 'Chicken Breast', 8, '2025-04-05', 'Available', 1, '', '2025-03-11 15:49:02'),
+(5, 1, 'Canned Beans', 12, '2026-01-01', 'Available', 2, '', '2025-03-11 15:49:02');
 
 -- --------------------------------------------------------
 
@@ -121,7 +138,7 @@ CREATE TABLE `reviews` (
   `rating` int DEFAULT NULL,
   `comment` text,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -149,6 +166,7 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `role` enum('Donor','Recipient','Volunteer','Admin') NOT NULL,
+  `typeOfUser` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -156,12 +174,16 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`userID`, `name`, `email`, `password`, `role`, `created_at`) VALUES
-(1, 'Ray Johnson', 'rayjohn1@abv.bg', 'nyakakwaparola', 'Donor', '2025-03-11 15:48:42'),
-(2, 'Stacy Brown', 'stacybrown1@abv.bg', 'drugaparola', 'Volunteer', '2025-03-11 15:48:42'),
-(3, 'Dylan Smith', 'dylansmith1@abv.bg', 'otnowoparola', 'Recipient', '2025-03-11 15:48:42'),
-(4, 'Alice Carter', 'alicecarter1@abv.bg', 'malkaparola', 'Donor', '2025-03-11 15:48:42'),
-(5, 'Bob Wilson', 'bobwilson1@abv.bg', 'golyamataparola', 'Recipient', '2025-03-11 15:48:42');
+INSERT INTO `users` (`userID`, `name`, `email`, `password`, `role`, `typeOfUser`, `created_at`) VALUES
+(1, 'Ray Johnson', 'rayjohn1@abv.bg', 'nyakakwaparola', 'Donor', '', '2025-03-11 15:48:42'),
+(2, 'Stacy Brown', 'stacybrown1@abv.bg', 'drugaparola', 'Volunteer', '', '2025-03-11 15:48:42'),
+(3, 'Dylan Smith', 'dylansmith1@abv.bg', 'otnowoparola', 'Recipient', '', '2025-03-11 15:48:42'),
+(4, 'Alice Carter', 'alicecarter1@abv.bg', 'malkaparola', 'Donor', '', '2025-03-11 15:48:42'),
+(5, 'Bob Wilson', 'bobwilson1@abv.bg', 'golyamataparola', 'Recipient', '', '2025-03-11 15:48:42'),
+(6, 'adrian', 'pisnami@abv.bg', 'kalendara1111', 'Volunteer', 'Volunteer', '2025-04-09 14:32:57'),
+(7, 'darenie', 'zabezpari@abv.bg', 'kalendar', 'Volunteer', 'Volunteer', '2025-04-09 14:54:21'),
+(8, 'dfghdfg sdf s', 'dsada@abv.bg', 'dasdasfasf', 'Volunteer', 'Volunteer', '2025-04-09 15:00:34'),
+(9, 'juhi', 'oihiuhyu@abv.bg', 'sfasflsdjfis', 'Volunteer', 'Volunteer', '2025-04-09 20:35:25');
 
 -- --------------------------------------------------------
 
@@ -181,6 +203,13 @@ CREATE TABLE `volunteer_shifts` (
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `donations`
+--
+ALTER TABLE `donations`
+  ADD PRIMARY KEY (`donation_id`),
+  ADD KEY `donor_id` (`donor_id`);
 
 --
 -- Indexes for table `food_items`
@@ -247,10 +276,16 @@ ALTER TABLE `volunteer_shifts`
 --
 
 --
+-- AUTO_INCREMENT for table `donations`
+--
+ALTER TABLE `donations`
+  MODIFY `donation_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `food_items`
 --
 ALTER TABLE `food_items`
-  MODIFY `foodID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `foodID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=542;
 
 --
 -- AUTO_INCREMENT for table `fridges`
@@ -286,7 +321,7 @@ ALTER TABLE `transactions`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `userID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `userID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `volunteer_shifts`
@@ -297,6 +332,12 @@ ALTER TABLE `volunteer_shifts`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `donations`
+--
+ALTER TABLE `donations`
+  ADD CONSTRAINT `donations_ibfk_1` FOREIGN KEY (`donor_id`) REFERENCES `users` (`userID`);
 
 --
 -- Constraints for table `food_items`

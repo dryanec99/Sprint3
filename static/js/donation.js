@@ -1,5 +1,8 @@
 // Community Fridge Donation Management System
 
+// Test message to verify script is loading
+console.log('DONATION.JS SCRIPT LOADED - TEST MESSAGE');
+
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
   console.log('Donation page loaded');
@@ -10,8 +13,11 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('User data from localStorage:', userData);
   if (!userData || !userData.id) {
     // Redirect to login if not logged in
+    console.log('User not logged in, redirecting to login page');
     alert('Please log in to donate food');
     window.location.href = '/login.html';
+  } else {
+    console.log('User is logged in as donor with ID:', userData.id);
   }
 });
 
@@ -33,6 +39,7 @@ function setupDonationFormSubmission() {
     const userData = JSON.parse(localStorage.getItem('userData'));
     console.log('User data at submission:', userData);
     if (!userData || !userData.id) {
+      console.log('User not logged in at submission time, redirecting to login');
       alert('Please log in to donate food');
       window.location.href = '/login.html';
       return;
@@ -44,6 +51,14 @@ function setupDonationFormSubmission() {
     const quantity = document.getElementById('quantity').value;
     const expiration = document.getElementById('expiration').value;
     const description = document.getElementById('description').value;
+    
+    console.log('Form values:', {
+      foodName,
+      category,
+      quantity,
+      expiration,
+      description
+    });
     
     // Create donation data object
     const donationData = {
@@ -75,6 +90,7 @@ function setupDonationFormSubmission() {
       });
       
       console.log('Response status:', response.status);
+      console.log('Response headers:', [...response.headers.entries()]);
       
       // Parse the response
       const result = await response.json();
@@ -86,6 +102,7 @@ function setupDonationFormSubmission() {
       
       if (response.ok) {
         // Show success message
+        console.log('Donation successful!');
         alert('Thank you for your donation! Your food item has been added to our inventory.');
         
         // Reset form
@@ -102,6 +119,7 @@ function setupDonationFormSubmission() {
       }
     } catch (error) {
       console.error('Error submitting donation:', error);
+      console.error('Error details:', error.message, error.stack);
       alert('An error occurred while submitting your donation. Please try again.');
     }
   });

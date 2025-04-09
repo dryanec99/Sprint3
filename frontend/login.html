@@ -254,6 +254,14 @@
         loginMessage.className = "message success-message";
         loginMessage.style.display = "block";
         
+        // Store user data in localStorage for use in other pages
+        localStorage.setItem('userData', JSON.stringify({
+          id: data.user.id,
+          name: data.user.name,
+          email: data.user.email,
+          role: data.user.role
+        }));
+        
         // Redirect to appropriate page based on user role
         setTimeout(() => {
           if (data.user.role === "Donor") {

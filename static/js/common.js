@@ -5,7 +5,21 @@ document.addEventListener('DOMContentLoaded', function() {
   checkAuthentication();
   setupNavigationHighlight();
   displayNotificationCount();
+  makeLogoClickable();
 });
+
+// Make the Community Fridge logo/title clickable on all pages
+function makeLogoClickable() {
+  const headerTitle = document.querySelector('header h1');
+  if (headerTitle) {
+    // Create a wrapper link if it doesn't already exist
+    if (!headerTitle.querySelector('a')) {
+      const titleText = headerTitle.textContent;
+      headerTitle.innerHTML = `<a href="/" style="color: white; text-decoration: none;">${titleText}</a>`;
+      console.log('Made Community Fridge logo clickable');
+    }
+  }
+}
 
 // Check if user is authenticated and redirect if needed
 function checkAuthentication() {

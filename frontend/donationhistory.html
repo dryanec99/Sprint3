@@ -49,13 +49,61 @@
     }
     main {
       padding: 40px 20px;
-      max-width: 800px;
+      max-width: 1000px;
       margin: 0 auto;
+      margin-bottom: 80px; /* Add space for footer */
+    }
+    #userInfo {
+      background-color: #e8f5e9;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 5px solid #2e8b57;
+    }
+    #userInfo h3 {
+      margin-top: 0;
+      color: #2e8b57;
+    }
+    .section {
+      margin-bottom: 40px;
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #e8f5e9;
+      padding-bottom: 10px;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+    }
+    .section-title h2 {
+      margin: 0;
+      color: #2e8b57;
+    }
+    .count-badge {
+      background-color: #2e8b57;
+      color: white;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 10px;
+      font-weight: bold;
     }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
     table, th, td {
       border: 1px solid #ddd;
@@ -67,49 +115,377 @@
     th {
       background-color: #2e8b57;
       color: white;
+      position: sticky;
+      top: 0;
     }
     tr:nth-child(even) {
       background-color: #f2f2f2;
+    }
+    tr:hover {
+      background-color: #e8f5e9;
+    }
+    .status-available {
+      color: #2e7d32;
+      font-weight: bold;
+    }
+    .status-reserved {
+      color: #f57c00;
+      font-weight: bold;
+    }
+    .status-collected {
+      color: #1976d2;
+      font-weight: bold;
+    }
+    .status-expired {
+      color: #d32f2f;
+      font-weight: bold;
     }
     footer {
       background-color: #2e8b57;
       color: white;
       text-align: center;
       padding: 15px;
-      margin-top: 40px;
       position: fixed;
       width: 100%;
       bottom: 0;
+    }
+    .donate-btn {
+      display: inline-block;
+      background-color: #3cb371;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    .donate-btn:hover {
+      transform: scale(1.05);
+      background-color: #2e8b57;
+    }
+    .no-data {
+      text-align: center;
+      padding: 40px;
+      background-color: #f5f5f5;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    .table-responsive {
+      overflow-x: auto;
+    }
+    .debug-info {
+      background-color: #ffeb3b;
+      color: #333;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
     }
   </style>
 </head>
 <body>
   <header>
-    <button class="back-btn" onclick="window.history.back()">&larr; Back</button>
-    <h1>Community Fridge</h1>
+    <button class="back-btn" onclick="window.location.href='/donate'">&larr; Back</button>
+    <h1><a href="/" style="color: white; text-decoration: none;">Community Fridge</a></h1>
   </header>
   <main>
-    <h2>Donation History</h2>
-    <p>Below is a record of your previous food donations. This table shows details such as donation dates, food items, quantities, and current status.</p>
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Food Item</th>
-          <th>Quantity</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Table content will be populated by JavaScript -->
-      </tbody>
-    </table>
+    <div id="userInfo">
+      <!-- User info will be populated by JavaScript -->
+    </div>
+    
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>Donation Records</h2>
+          <span class="count-badge" id="donationsCount">0</span>
+        </div>
+      </div>
+      <p>Below is a record of your donations from the donations table. This shows when you donated items and their details.</p>
+      
+      <div class="table-responsive">
+        <table id="donationsTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Food Item</th>
+              <th>Quantity</th>
+              <th>Expiry Date</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Table content will be populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>Food Items</h2>
+          <span class="count-badge" id="foodItemsCount">0</span>
+        </div>
+      </div>
+      <p>Below is a list of all food items you have donated that are currently in the system. This shows their current status and location.</p>
+      
+      <div class="table-responsive">
+        <table id="foodItemsTable">
+          <thead>
+            <tr>
+              <th>Food Item</th>
+              <th>Category</th>
+              <th>Quantity</th>
+              <th>Expiry Date</th>
+              <th>Fridge Location</th>
+              <th>Status</th>
+              <th>Added On</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Table content will be populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="actions">
+      <a href="/donationform" class="donate-btn">Donate More Food</a>
+    </div>
   </main>
   <footer>
     <p>&copy; 2025 Community Fridge. All rights reserved.</p>
   </footer>
   
-  <!-- Include JavaScript file -->
-  <script src="/static/js/donation-history.js"></script>
+  <!-- Inline JavaScript for better debugging -->
+  <script>
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Donation history page loaded');
+      
+      // Check if user is logged in
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      console.log('User data from localStorage:', userData);
+      
+      // For testing purposes, if no user data is found, use a test donor ID
+      let donorId;
+      if (!userData || !userData.id) {
+        console.log('No user data found, using test donor ID 1');
+        donorId = 1; // Use test donor ID 1 (Ray Johnson from the database)
+        
+        // Create a temporary user data object for display
+        const tempUserData = {
+          id: donorId,
+          name: 'Test Donor (Ray Johnson)',
+          email: 'test@example.com',
+          role: 'Donor'
+        };
+        
+        // Display user info with test data
+        displayUserInfo(tempUserData);
+      } else {
+        console.log('Using donor ID from localStorage:', userData.id);
+        donorId = userData.id;
+        
+        // Display user info
+        displayUserInfo(userData);
+      }
+      
+      // Display donation history
+      fetchAndDisplayDonationHistory(donorId);
+    });
+
+    // Display user information
+    function displayUserInfo(userData) {
+      const userInfoSection = document.getElementById('userInfo');
+      if (userInfoSection) {
+        userInfoSection.innerHTML = `
+          <h3>Welcome, ${userData.name || 'Donor'}</h3>
+          <p>Email: ${userData.email || 'Not available'}</p>
+          <p>Role: ${userData.role || 'Donor'}</p>
+          <p>User ID: ${userData.id}</p>
+        `;
+      }
+    }
+
+    // Fetch donation history from server and display in the tables
+    async function fetchAndDisplayDonationHistory(donorId) {
+      try {
+        console.log('Fetching donation history for donor ID:', donorId);
+        
+        // Show loading state
+        const donationsTableBody = document.querySelector('#donationsTable tbody');
+        const foodItemsTableBody = document.querySelector('#foodItemsTable tbody');
+        
+        if (!donationsTableBody || !foodItemsTableBody) {
+          console.error('Table elements not found in the DOM!');
+          return;
+        }
+        
+        donationsTableBody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center;">Loading donation history...</td>
+          </tr>
+        `;
+        
+        foodItemsTableBody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center;">Loading food items...</td>
+          </tr>
+        `;
+        
+        // Fetch donations from server
+        console.log('Making API request to:', `/api/donations/donor/${donorId}`);
+        const response = await fetch(`/api/donations/donor/${donorId}`);
+        
+        console.log('API response status:', response.status);
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch donation history: ${response.status} ${response.statusText}`);
+        }
+        
+        const responseText = await response.text();
+        console.log('Raw API response:', responseText);
+        
+        let data;
+        try {
+          data = JSON.parse(responseText);
+        } catch (e) {
+          console.error('Error parsing JSON response:', e);
+          throw new Error('Invalid JSON response from server');
+        }
+        
+        console.log('Parsed data:', data);
+        
+        // Process donations
+        const donations = data.donations || [];
+        console.log('Donations count:', donations.length);
+        
+        if (donations.length === 0) {
+          // If no donations, display a message
+          donationsTableBody.innerHTML = `
+            <tr>
+              <td colspan="5" style="text-align: center;">No donation history available. Make your first donation today!</td>
+            </tr>
+          `;
+        } else {
+          // Clear the table
+          donationsTableBody.innerHTML = '';
+          
+          // Add each donation to the table
+          donations.forEach(donation => {
+            console.log('Processing donation:', donation);
+            
+            // Format dates
+            const donationDate = donation.donation_date ? new Date(donation.donation_date).toLocaleDateString() : 'N/A';
+            const expiryDate = donation.expiry_date ? new Date(donation.expiry_date).toLocaleDateString() : 'N/A';
+            
+            // Create table row
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${donationDate}</td>
+              <td>${donation.food_name || 'N/A'}</td>
+              <td>${donation.quantity || 0}</td>
+              <td>${expiryDate}</td>
+              <td>${donation.notes || 'N/A'}</td>
+            `;
+            
+            donationsTableBody.appendChild(row);
+          });
+        }
+        
+        // Process food items
+        const foodItems = data.foodItems || [];
+        console.log('Food items count:', foodItems.length);
+        
+        if (foodItems.length === 0) {
+          // If no food items, display a message
+          foodItemsTableBody.innerHTML = `
+            <tr>
+              <td colspan="7" style="text-align: center;">No food items available.</td>
+            </tr>
+          `;
+        } else {
+          // Clear the table
+          foodItemsTableBody.innerHTML = '';
+          
+          // Add each food item to the table
+          foodItems.forEach(item => {
+            console.log('Processing food item:', item);
+            
+            // Format dates
+            const createdDate = item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A';
+            const expiryDate = item.expirationDate ? new Date(item.expirationDate).toLocaleDateString() : 'N/A';
+            
+            // Set status color
+            let statusClass = '';
+            switch(item.status) {
+              case 'Available':
+                statusClass = 'status-available';
+                break;
+              case 'Reserved':
+                statusClass = 'status-reserved';
+                break;
+              case 'Collected':
+                statusClass = 'status-collected';
+                break;
+              default:
+                statusClass = '';
+            }
+            
+            // Create table row
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${item.name || 'N/A'}</td>
+              <td>${item.category || 'N/A'}</td>
+              <td>${item.quantity || 0}</td>
+              <td>${expiryDate}</td>
+              <td>${item.fridge_location || 'N/A'}</td>
+              <td class="${statusClass}">${item.status || 'N/A'}</td>
+              <td>${createdDate}</td>
+            `;
+            
+            foodItemsTableBody.appendChild(row);
+          });
+        }
+        
+        // Show the total counts
+        const donationsCount = document.getElementById('donationsCount');
+        const foodItemsCount = document.getElementById('foodItemsCount');
+        
+        if (donationsCount) {
+          donationsCount.textContent = donations.length;
+        }
+        
+        if (foodItemsCount) {
+          foodItemsCount.textContent = foodItems.length;
+        }
+        
+      } catch (error) {
+        console.error('Error fetching donation history:', error);
+        
+        // Show error message
+        const donationsTableBody = document.querySelector('#donationsTable tbody');
+        const foodItemsTableBody = document.querySelector('#foodItemsTable tbody');
+        
+        if (donationsTableBody) {
+          donationsTableBody.innerHTML = `
+            <tr>
+              <td colspan="5" style="text-align: center;">Error loading donation history: ${error.message}</td>
+            </tr>
+          `;
+        }
+        
+        if (foodItemsTableBody) {
+          foodItemsTableBody.innerHTML = `
+            <tr>
+              <td colspan="7" style="text-align: center;">Error loading food items: ${error.message}</td>
+            </tr>
+          `;
+        }
+      }
+    }
+  </script>
 </body>
 </html>
