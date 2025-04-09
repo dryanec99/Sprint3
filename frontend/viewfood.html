@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Available Food - Community Fridge</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background-color: #2e8b57;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+      position: relative;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+    header .back-btn {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      background: linear-gradient(90deg, #2e8b57 0%, #3cb371 100%);
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 1em;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    header .back-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    }
+    main {
+      padding: 40px 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #2e8b57;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    footer {
+      background-color: #2e8b57;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+      bottom: 0;
+      width: 100%;
+      position: fixed;
+    }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      font-style: italic;
+      color: #666;
+    }
+    .error {
+      text-align: center;
+      padding: 20px;
+      color: #d9534f;
+    }
+    tr {
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    tr:hover {
+      background-color: #e8f5e9;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <button class="back-btn" onclick="window.history.back()">&larr; Back</button>
+  <h1>Community Fridge</h1>
+</header>
+<main>
+  <h2>Available Food for Collection</h2>
+  <p>Below is the current list of food items available for collection from our community fridges. Please review and reserve your desired items.</p>
+  <table>
+    <thead>
+    <tr>
+      <th>Food Item</th>
+      <th>Status</th>
+      <th>Quantity</th>
+      <th>Expiration Date</th>
+      <th>Location</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td colspan="5" class="loading">Loading food items...</td>
+      </tr>
+    </tbody>
+  </table>
+</main>
+<footer>
+  <p>&copy; 2025 Community Fridge. All rights reserved.</p>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const tbody = document.querySelector('tbody');
+    
+    // Show loading message
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" class="loading">Loading food items...</td>
+      </tr>
+    `;
+    
+    // Fetch food items from the API
+    fetch('/api/food')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Clear the table
+        tbody.innerHTML = '';
+        
+        // Check if there are any food items
+        if (data.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="loading">No food items are currently available. Please check back later.</td>
+            </tr>
+          `;
+          return;
+        }
+        
+        // Add each food item to the table
+        data.forEach(item => {
+          // Format the date
+          const date = new Date(item.expirationDate);
+          const formattedDate = date.toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          });
+          
+          // Create the row
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${item.name}</td>
+            <td>${item.status}</td>
+            <td>${item.quantity}</td>
+            <td>${formattedDate}</td>
+            <td>${item.location}</td>
+          `;
+          
+          // Add data attribute for the food ID
+          row.setAttribute('data-food-id', item.foodID);
+          
+          // Add click event to redirect to reserve page
+          row.addEventListener('click', function() {
+            window.location.href = `reservefood.html?foodId=${item.foodID}`;
+          });
+          
+          tbody.appendChild(row);
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching food data:', error);
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="error">Error loading food items. Please try again later.</td>
+          </tr>
+        `;
+      });
+  });
+</script>
+</body>
+</html>

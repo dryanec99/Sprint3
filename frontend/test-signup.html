@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Signup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #2e8b57;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      margin-top: 10px;
+    }
+    input, select {
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+    button {
+      background-color: #2e8b57;
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+      min-height: 100px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Test Signup Form</h1>
+  
+  <form id="testForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" required>
+    
+    <label for="email">Email:</label>
+    <input type="email" id="email" required>
+    
+    <label for="password">Password:</label>
+    <input type="password" id="password" required>
+    
+    <label for="role">Role:</label>
+    <select id="role" required>
+      <option value="Donor">Donor</option>
+      <option value="Recipient">Recipient</option>
+      <option value="Volunteer">Volunteer</option>
+    </select>
+    
+    <button type="submit">Test Signup</button>
+  </form>
+  
+  <h2>Result:</h2>
+  <div id="result">Results will appear here...</div>
+  
+  <script>
+    document.getElementById('testForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      alert('Form submitted! Check the console for details.');
+      
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = 'Sending request...';
+      
+      const userData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value,
+        role: document.getElementById('role').value,
+        typeOfUser: document.getElementById('role').value
+      };
+      
+      console.log('Sending data:', userData);
+      
+      fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+      })
+      .then(response => {
+        console.log('Response status:', response.status);
+        return response.text();
+      })
+      .then(text => {
+        console.log('Raw response:', text);
+        
+        let jsonResponse;
+        try {
+          jsonResponse = JSON.parse(text);
+          console.log('Parsed response:', jsonResponse);
+        } catch (e) {
+          console.error('Error parsing JSON:', e);
+          resultDiv.innerHTML = `
+            <p>Error parsing response as JSON</p>
+            <p>Status: ${response.status}</p>
+            <p>Raw response: ${text}</p>
+          `;
+          return;
+        }
+        
+        if (jsonResponse.success) {
+          resultDiv.innerHTML = `
+            <p style="color: green;">Registration successful!</p>
+            <p>User ID: ${jsonResponse.userId || (jsonResponse.user && jsonResponse.user.id)}</p>
+            <pre>${JSON.stringify(jsonResponse, null, 2)}</pre>
+          `;
+        } else {
+          resultDiv.innerHTML = `
+            <p style="color: red;">Registration failed</p>
+            <p>Error: ${jsonResponse.error || 'Unknown error'}</p>
+            <pre>${JSON.stringify(jsonResponse, null, 2)}</pre>
+          `;
+        }
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+        resultDiv.innerHTML = `
+          <p style="color: red;">Network error</p>
+          <p>${error.message}</p>
+        `;
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Donation API</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #2e8b57;
+    }
+    .test-section {
+      margin-bottom: 30px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #2e8b57;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    pre {
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Test Donation API</h1>
+  
+  <div class="test-section">
+    <h2>1. Test POST /api/donations</h2>
+    <form id="testPostForm">
+      <label for="donor_id">Donor ID:</label>
+      <input type="number" id="donor_id" value="1" required>
+      
+      <label for="foodName">Food Name:</label>
+      <input type="text" id="foodName" value="Test Food Item" required>
+      
+      <label for="category">Category:</label>
+      <input type="text" id="category" value="Fruits">
+      
+      <label for="quantity">Quantity:</label>
+      <input type="number" id="quantity" value="2" required>
+      
+      <label for="expiration">Expiration Date (YYYY-MM-DD):</label>
+      <input type="date" id="expiration" required>
+      
+      <label for="description">Description:</label>
+      <textarea id="description">Test description</textarea>
+      
+      <button type="submit">Test POST Donation</button>
+    </form>
+    <div>
+      <h3>Request:</h3>
+      <pre id="postRequest"></pre>
+      <h3>Response:</h3>
+      <pre id="postResponse"></pre>
+    </div>
+  </div>
+  
+  <div class="test-section">
+    <h2>2. Test GET /api/donations/donor/:id</h2>
+    <form id="testGetForm">
+      <label for="get_donor_id">Donor ID:</label>
+      <input type="number" id="get_donor_id" value="1" required>
+      <button type="submit">Test GET Donor Donations</button>
+    </form>
+    <div>
+      <h3>Response:</h3>
+      <pre id="getResponse"></pre>
+    </div>
+  </div>
+  
+  <script>
+    // Set today's date as default for expiration date input
+    document.addEventListener('DOMContentLoaded', function() {
+      const today = new Date();
+      const nextWeek = new Date(today);
+      nextWeek.setDate(today.getDate() + 7);
+      
+      const formattedDate = nextWeek.toISOString().split('T')[0];
+      document.getElementById('expiration').value = formattedDate;
+      
+      // Setup form submission handlers
+      setupPostTest();
+      setupGetTest();
+    });
+    
+    function setupPostTest() {
+      const form = document.getElementById('testPostForm');
+      const requestDisplay = document.getElementById('postRequest');
+      const responseDisplay = document.getElementById('postResponse');
+      
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Get form values
+        const donor_id = document.getElementById('donor_id').value;
+        const foodName = document.getElementById('foodName').value;
+        const category = document.getElementById('category').value;
+        const quantity = document.getElementById('quantity').value;
+        const expiration = document.getElementById('expiration').value;
+        const description = document.getElementById('description').value;
+        
+        // Create request data
+        const requestData = {
+          donor_id,
+          foodName,
+          category,
+          quantity,
+          expiration,
+          description
+        };
+        
+        // Display request data
+        requestDisplay.textContent = JSON.stringify(requestData, null, 2);
+        
+        try {
+          // Send request
+          const response = await fetch('/api/donations', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+          });
+          
+          // Get response data
+          const responseData = await response.json();
+          
+          // Display response
+          responseDisplay.textContent = JSON.stringify({
+            status: response.status,
+            statusText: response.statusText,
+            data: responseData
+          }, null, 2);
+        } catch (error) {
+          responseDisplay.textContent = 'Error: ' + error.message;
+        }
+      });
+    }
+    
+    function setupGetTest() {
+      const form = document.getElementById('testGetForm');
+      const responseDisplay = document.getElementById('getResponse');
+      
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Get donor ID
+        const donorId = document.getElementById('get_donor_id').value;
+        
+        try {
+          // Send request
+          const response = await fetch(`/api/donations/donor/${donorId}`);
+          
+          // Get response data
+          const responseData = await response.json();
+          
+          // Display response
+          responseDisplay.textContent = JSON.stringify({
+            status: response.status,
+            statusText: response.statusText,
+            data: responseData
+          }, null, 2);
+        } catch (error) {
+          responseDisplay.textContent = 'Error: ' + error.message;
+        }
+      });
+    }
+  </script>
+</body>
+</html>

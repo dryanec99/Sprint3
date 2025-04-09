@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Community Fridge</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background-color: #2e8b57;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+      position: relative;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+    header nav {
+      margin-top: 10px;
+    }
+    header nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-size: 1.1em;
+    }
+    /* Updated Login Button Styles */
+    header .login-btn {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      background: linear-gradient(90deg, #2e8b57 0%, #3cb371 100%);
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 1em;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    header .login-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      background: url('images/hero-bg.jpg') no-repeat center center/cover;
+      color: white;
+      text-align: center;
+      padding: 100px 20px;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
+    .hero h2,
+    .hero p,
+    .hero .cta-buttons {
+      position: relative;
+      z-index: 2;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    }
+    .hero h2 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+    .hero p {
+      font-size: 1.3em;
+      margin-bottom: 40px;
+    }
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .cta-buttons button {
+      padding: 15px 30px;
+      font-size: 1.1em;
+      background-color: #2e8b57;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .cta-buttons button:hover {
+      background-color: #3cb371;
+    }
+
+    /* How It Works Section */
+    .how-it-works {
+      padding: 60px 20px;
+      background-color: #fff;
+      text-align: center;
+    }
+    .how-it-works h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    .how-it-works ol {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: left;
+      font-size: 1.1em;
+      line-height: 1.6;
+    }
+    .how-it-works li {
+      margin: 15px 0;
+    }
+
+    /* Impact Section */
+    .impact {
+      background-color: #f1f1f1;
+      padding: 60px 20px;
+      text-align: center;
+    }
+    .impact h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    .impact p {
+      font-size: 1.2em;
+      max-width: 800px;
+      margin: 0 auto 20px;
+    }
+
+    /* Call-to-Action Section */
+    .cta {
+      background-color: #2e8b57;
+      color: white;
+      padding: 60px 20px;
+      text-align: center;
+    }
+    .cta h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    .cta p {
+      font-size: 1.2em;
+      max-width: 600px;
+      margin: 0 auto 30px;
+    }
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #2e8b57;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Community Fridge</h1>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/about">About Us</a>
+    <a href="/contact">Contact Us</a>
+  </nav>
+  <!-- Updated button styling -->
+  <button class="login-btn" onclick="window.location.href='/login'">Login</button>
+</header>
+
+<main>
+  <!-- Hero Section -->
+  <section class="hero">
+    <h2>Be the Change: Nourish Our Community</h2>
+    <p>
+      Every donation makes a difference. Join us in creating a compassionate network where surplus food reaches those who need it most. Together, we transform lives and empower our community.
+    </p>
+    <div class="cta-buttons">
+      <button onclick="window.location.href='/donate'">Donate Now</button>
+      <button onclick="window.location.href='/receive'">Explore Food Resources</button>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works">
+    <h2>How It Works</h2>
+    <ol>
+      <li><strong>Donate:</strong> List your surplus food or register as a donor. Every contribution matters.</li>
+      <li><strong>Distribute:</strong> Food is collected and distributed to community fridges and local food banks.</li>
+      <li><strong>Collect:</strong> Recipients browse available food and reserve items as needed.</li>
+      <li><strong>Impact:</strong> We track every donation to ensure transparency and showcase the change you create.</li>
+    </ol>
+  </section>
+
+  <!-- Impact Section -->
+  <section class="impact">
+    <h2>Your Impact</h2>
+    <p>
+      Discover how your contributions transform lives. We share success stories and impact statistics that show the difference your donations make in our community.
+    </p>
+  </section>
+
+  <!-- Call-to-Action Section -->
+  <section class="cta">
+    <h2>Join the Movement</h2>
+    <p>
+      Whether you're donating food, accessing resources, or volunteering, your involvement is key to a stronger, more compassionate community.
+    </p>
+    <div class="cta-buttons">
+      <button onclick="window.location.href='/donate'">Donate Food</button>
+      <button onclick="window.location.href='/receive'">Find Food</button>
+      <button onclick="window.location.href='/volunteer'">Volunteer</button>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2025 Community Fridge. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Include JavaScript file -->
+<script src="/static/js/common.js"></script>
+</body>
+</html>

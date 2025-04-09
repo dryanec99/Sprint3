@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login / Sign Up - Community Fridge</title>
+  <style>
+    /* Global Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #2e8b57, #3cb371);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #333;
+    }
+    .container {
+      background: #fff;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      overflow: hidden;
+      padding: 20px;
+    }
+    .tab-header {
+      display: flex;
+      border-bottom: 2px solid #2e8b57;
+    }
+    .tab-header button {
+      flex: 1;
+      padding: 15px;
+      cursor: pointer;
+      background: #f9f9f9;
+      border: none;
+      outline: none;
+      font-size: 1.1em;
+      transition: background 0.3s;
+      border-bottom: 2px solid transparent;
+    }
+    .tab-header button.active {
+      background: #2e8b57;
+      color: #fff;
+      border-bottom: 2px solid #fff;
+    }
+    .form-content {
+      padding: 30px;
+    }
+    form {
+      display: none;
+      flex-direction: column;
+    }
+    form.active {
+      display: flex;
+    }
+    form input, form textarea, form select {
+      padding: 14px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 1em;
+      transition: border 0.3s;
+    }
+    form input:focus, form select:focus, form textarea:focus {
+      border-color: #3cb371;
+      outline: none;
+    }
+    form input::placeholder, form textarea::placeholder {
+      color: #999;
+    }
+    form button {
+      padding: 14px;
+      background: #2e8b57;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+      width: 100%;
+    }
+    form button:hover {
+      background-color: #3cb371;
+      transform: scale(1.05);
+    }
+    form button:active {
+      transform: scale(0.98);
+    }
+    .footer-link {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 0.9em;
+    }
+    .footer-link a {
+      color: #2e8b57;
+      text-decoration: none;
+    }
+    .volunteer-form {
+      display: none;
+    }
+    .form-helper-text {
+      font-size: 0.9em;
+      color: #888;
+    }
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      font-size: 1.1em;
+    }
+    /* Enhance select box appearance */
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-color: #f9f9f9;
+      background-image: url('data:image/svg+xml,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22%3e%3cpath d=%22M5 7l5 5 5-5%22/%3e%3c/svg%3e');
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 12px;
+    }
+    .message {
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      text-align: center;
+      display: none;
+    }
+    .error-message {
+      background-color: #ffebee;
+      color: #c62828;
+      border: 1px solid #ef9a9a;
+    }
+    .success-message {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #a5d6a7;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="tab-header">
+    <button id="loginTab" class="active">Login</button>
+    <button id="signupTab">Sign Up</button>
+  </div>
+  <div class="form-content">
+    <div id="loginMessage" class="message"></div>
+    <div id="signupMessage" class="message"></div>
+    
+    <!-- Login Form -->
+    <form id="loginForm" class="active">
+      <input type="email" id="loginEmail" name="email" placeholder="Email" required />
+      <input type="password" id="loginPassword" name="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
+
+    <!-- Sign Up Form -->
+    <form id="signupForm">
+      <label for="userType">Select User Type:</label>
+      <select id="userType" name="userType" required>
+        <option value="">Select Type</option>
+        <option value="Donor">Donor</option>
+        <option value="Recipient">Recipient</option>
+        <option value="Volunteer">Volunteer</option>
+      </select>
+
+      <div id="signupDetails">
+        <input type="text" id="signupName" name="name" placeholder="Full Name" required />
+        <input type="email" id="signupEmail" name="email" placeholder="Email" required />
+        <input type="password" id="signupPassword" name="password" placeholder="Password" required />
+        <div class="form-helper-text">Password must be at least 8 characters long</div>
+      </div>
+
+      <!-- Volunteer Application Form (Hidden by default) -->
+      <div id="volunteerForm" class="volunteer-form">
+        <textarea name="whyVolunteer" id="whyVolunteer" placeholder="Why do you want to volunteer?" rows="5" required></textarea>
+        <input type="text" name="availability" id="availability" placeholder="Availability (e.g., weekends, evenings)" required />
+        <textarea name="skills" id="skills" placeholder="Relevant Skills or Experience" rows="5"></textarea>
+      </div>
+
+      <button type="submit">Sign Up</button>
+    </form>
+
+    <div class="footer-link">
+      <a href="/">Back to Home</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Tab switching functionality
+  const loginTab = document.getElementById("loginTab");
+  const signupTab = document.getElementById("signupTab");
+  const loginForm = document.getElementById("loginForm");
+  const signupForm = document.getElementById("signupForm");
+  const signupDetails = document.getElementById("signupDetails");
+  const volunteerForm = document.getElementById("volunteerForm");
+  const userType = document.getElementById("userType");
+  const loginMessage = document.getElementById("loginMessage");
+  const signupMessage = document.getElementById("signupMessage");
+
+  loginTab.addEventListener("click", function() {
+    loginTab.classList.add("active");
+    signupTab.classList.remove("active");
+    loginForm.classList.add("active");
+    signupForm.classList.remove("active");
+    loginMessage.style.display = "none";
+    signupMessage.style.display = "none";
+  });
+
+  signupTab.addEventListener("click", function() {
+    signupTab.classList.add("active");
+    loginTab.classList.remove("active");
+    signupForm.classList.add("active");
+    loginForm.classList.remove("active");
+    loginMessage.style.display = "none";
+    signupMessage.style.display = "none";
+  });
+
+  // Show/hide volunteer form based on user type
+  userType.addEventListener("change", function() {
+    if (this.value === "Volunteer") {
+      volunteerForm.style.display = "block";
+    } else {
+      volunteerForm.style.display = "none";
+    }
+  });
+
+  // Handle login form submission
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+    
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        // Login successful
+        loginMessage.textContent = "Login successful! Redirecting...";
+        loginMessage.className = "message success-message";
+        loginMessage.style.display = "block";
+        
+        // Redirect to appropriate page based on user role
+        setTimeout(() => {
+          if (data.user.role === "Donor") {
+            window.location.href = "/donate";
+          } else if (data.user.role === "Recipient") {
+            window.location.href = "/receive";
+          } else if (data.user.role === "Volunteer") {
+            window.location.href = "/volunteer";
+          } else {
+            window.location.href = "/";
+          }
+        }, 1500);
+      } else {
+        // Login failed
+        loginMessage.textContent = data.error || "Login failed. Please check your credentials.";
+        loginMessage.className = "message error-message";
+        loginMessage.style.display = "block";
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      loginMessage.textContent = "An error occurred. Please try again later.";
+      loginMessage.className = "message error-message";
+      loginMessage.style.display = "block";
+    }
+  });
+
+  // Handle signup form submission
+  signupForm.addEventListener("submit", function(e) {
+    e.preventDefault();
+    
+    console.log("Signup form submitted");
+    
+    // Get form values
+    const name = document.getElementById("signupName").value;
+    const email = document.getElementById("signupEmail").value;
+    const password = document.getElementById("signupPassword").value;
+    const role = document.getElementById("userType").value;
+    
+    // Basic validation
+    if (!role) {
+      signupMessage.textContent = "Please select a user type";
+      signupMessage.className = "message error-message";
+      signupMessage.style.display = "block";
+      return;
+    }
+    
+    if (password.length < 8) {
+      signupMessage.textContent = "Password must be at least 8 characters long";
+      signupMessage.className = "message error-message";
+      signupMessage.style.display = "block";
+      return;
+    }
+    
+    // Create user data object
+    const userData = {
+      name: name,
+      email: email,
+      password: password,
+      role: role,
+      typeOfUser: role
+    };
+    
+    // Add volunteer-specific data if applicable
+    if (role === "Volunteer") {
+      userData.whyVolunteer = document.getElementById("whyVolunteer").value;
+      userData.availability = document.getElementById("availability").value;
+      userData.skills = document.getElementById("skills").value;
+    }
+    
+    console.log("Sending data:", userData);
+    
+    // Send data to server using fetch API
+    fetch('/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userData)
+    })
+    .then(response => {
+      console.log("Response status:", response.status);
+      return response.json();
+    })
+    .then(data => {
+      console.log("Response data:", data);
+      
+      if (data.success) {
+        // Registration successful
+        signupMessage.textContent = "Registration successful! Please log in.";
+        signupMessage.className = "message success-message";
+        signupMessage.style.display = "block";
+        
+        // Clear form
+        signupForm.reset();
+        
+        // Switch to login tab after a delay
+        setTimeout(() => {
+          loginTab.click();
+        }, 2000);
+      } else {
+        // Registration failed
+        signupMessage.textContent = data.error || "Registration failed. Please try again.";
+        signupMessage.className = "message error-message";
+        signupMessage.style.display = "block";
+      }
+    })
+    .catch(error => {
+      console.error("Registration error:", error);
+      signupMessage.textContent = "An error occurred. Please try again later.";
+      signupMessage.className = "message error-message";
+      signupMessage.style.display = "block";
+    });
+  });
+</script>
+
+</body>
+</html>
