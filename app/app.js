@@ -104,11 +104,31 @@ app.get("/reservefood", function(req, res) {
 app.get("/reservations", function(req, res) {
     res.sendFile(path.join(__dirname, "..", "frontend", "reservations.html"));
 });
+
+app.get("/bob-reservations", function(req, res) {
+    res.sendFile(path.join(__dirname, "..", "frontend", "bob-reservations.html"));
+});
 app.get("/manageinventory", function(req, res) {
     res.sendFile(path.join(__dirname, "..", "frontend", "manageinventory.html"));
 });
 app.get("/managereservations", function(req, res) {
     res.sendFile(path.join(__dirname, "..", "frontend", "managereservations.html"));
+});
+
+app.get("/volunteer-reservations", function(req, res) {
+    res.sendFile(path.join(__dirname, "..", "frontend", "volunteer-reservations.html"));
+});
+
+app.get("/test-reservations", function(req, res) {
+    res.sendFile(path.join(__dirname, "..", "frontend", "test-reservations.html"));
+});
+
+app.get("/volunteer-reservations-simple", function(req, res) {
+    res.sendFile(path.join(__dirname, "..", "frontend", "volunteer-reservations-simple.html"));
+});
+
+app.get("/debug-reservations", function(req, res) {
+    res.sendFile(path.join(__dirname, "..", "frontend", "debug-reservations.html"));
 });
 app.get("/sendnotifications", function(req, res) {
     res.sendFile(path.join(__dirname, "..", "frontend", "sendnotifications.html"));

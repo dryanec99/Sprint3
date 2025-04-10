@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Reservations API</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    pre {
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    button {
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Test Reservations API</h1>
+  
+  <button id="fetch-btn">Fetch Reservations</button>
+  
+  <h2>API Response:</h2>
+  <pre id="response"></pre>
+  
+  <h2>Reservations Table:</h2>
+  <table id="reservations-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Recipient</th>
+        <th>Food Item</th>
+        <th>Status</th>
+        <th>Pickup Date</th>
+        <th>Location</th>
+      </tr>
+    </thead>
+    <tbody id="reservations-body">
+      <!-- Reservations will be displayed here -->
+    </tbody>
+  </table>
+
+  <script>
+    document.getElementById('fetch-btn').addEventListener('click', fetchReservations);
+
+    async function fetchReservations() {
+      try {
+        // Clear previous results
+        document.getElementById('response').textContent = 'Loading...';
+        document.getElementById('reservations-body').innerHTML = '';
+        
+        // Fetch data from API
+        const response = await fetch('/api/manage-reservations/all');
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch reservations: ${response.status} ${response.statusText}`);
+        }
+        
+        // Get the response text
+        const responseText = await response.text();
+        
+        // Display the raw response
+        document.getElementById('response').textContent = responseText;
+        
+        // Parse the JSON
+        const data = JSON.parse(responseText);
+        
+        // Display the reservations in the table
+        const tableBody = document.getElementById('reservations-body');
+        
+        if (data.length === 0) {
+          tableBody.innerHTML = '<tr><td colspan="6">No reservations found</td></tr>';
+          return;
+        }
+        
+        data.forEach(reservation => {
+          const row = document.createElement('tr');
+          
+          // Format the pickup date
+          const pickupDate = reservation.pickupDate ? new Date(reservation.pickupDate).toLocaleDateString() : 'N/A';
+          
+          row.innerHTML = `
+            <td>${reservation.reservationID || 'N/A'}</td>
+            <td>${reservation.recipientName || 'Unknown'}</td>
+            <td>${reservation.foodName || 'Unknown'} (${reservation.quantity || 1})</td>
+            <td>${reservation.status || 'Pending'}</td>
+            <td>${pickupDate}</td>
+            <td>${reservation.location || 'N/A'}</td>
+          `;
+          
+          tableBody.appendChild(row);
+        });
+        
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('response').textContent = `Error: ${error.message}`;
+      }
+    }
+  </script>
+</body>
+</html>

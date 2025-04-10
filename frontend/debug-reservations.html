@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug Reservations API</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      color: #2e8b57;
+    }
+    button {
+      background-color: #2e8b57;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 10px 0;
+    }
+    pre {
+      background-color: #f5f5f5;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <h1>Debug Reservations API</h1>
+  
+  <div>
+    <button id="fetch-direct">Fetch Direct (XMLHttpRequest)</button>
+    <button id="fetch-jquery">Fetch with jQuery</button>
+    <button id="fetch-fetch">Fetch with Fetch API</button>
+  </div>
+  
+  <h2>API Response:</h2>
+  <pre id="response">Click a button above to fetch reservations...</pre>
+  
+  <h2>Reservations Table:</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Recipient</th>
+        <th>Food Item</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="reservations-body">
+      <!-- Reservations will be displayed here -->
+    </tbody>
+  </table>
+
+  <!-- Include jQuery for testing -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <script>
+    // Direct XMLHttpRequest
+    document.getElementById('fetch-direct').addEventListener('click', function() {
+      document.getElementById('response').innerHTML = 'Fetching with XMLHttpRequest...';
+      document.getElementById('reservations-body').innerHTML = '';
+      
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api/manage-reservations/all', true);
+      
+      xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          document.getElementById('response').innerHTML = `<span class="success">Success!</span> Response length: ${xhr.responseText.length} characters<br>First 200 characters: ${xhr.responseText.substring(0, 200)}...`;
+          
+          try {
+            const data = JSON.parse(xhr.responseText);
+            displayReservations(data);
+          } catch (error) {
+            document.getElementById('response').innerHTML += `<br><span class="error">Error parsing JSON: ${error.message}</span>`;
+          }
+        } else {
+          document.getElementById('response').innerHTML = `<span class="error">Error: ${xhr.status} ${xhr.statusText}</span>`;
+        }
+      };
+      
+      xhr.onerror = function() {
+        document.getElementById('response').innerHTML = `<span class="error">Network error occurred</span>`;
+      };
+      
+      xhr.send();
+    });
+    
+    // jQuery AJAX
+    document.getElementById('fetch-jquery').addEventListener('click', function() {
+      document.getElementById('response').innerHTML = 'Fetching with jQuery AJAX...';
+      document.getElementById('reservations-body').innerHTML = '';
+      
+      $.ajax({
+        url: '/api/manage-reservations/all',
+        method: 'GET',
+        success: function(data, textStatus, jqXHR) {
+          document.getElementById('response').innerHTML = `<span class="success">Success!</span> Response received<br>Data type: ${typeof data}<br>`;
+          
+          if (typeof data === 'string') {
+            document.getElementById('response').innerHTML += `First 200 characters: ${data.substring(0, 200)}...<br>`;
+            try {
+              data = JSON.parse(data);
+            } catch (error) {
+              document.getElementById('response').innerHTML += `<span class="error">Error parsing JSON: ${error.message}</span>`;
+              return;
+            }
+          }
+          
+          document.getElementById('response').innerHTML += `Found ${data.length} reservations`;
+          displayReservations(data);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          document.getElementById('response').innerHTML = `<span class="error">Error: ${textStatus} - ${errorThrown}</span>`;
+        }
+      });
+    });
+    
+    // Fetch API
+    document.getElementById('fetch-fetch').addEventListener('click', function() {
+      document.getElementById('response').innerHTML = 'Fetching with Fetch API...';
+      document.getElementById('reservations-body').innerHTML = '';
+      
+      fetch('/api/manage-reservations/all')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.text();
+        })
+        .then(text => {
+          document.getElementById('response').innerHTML = `<span class="success">Success!</span> Response length: ${text.length} characters<br>First 200 characters: ${text.substring(0, 200)}...`;
+          
+          try {
+            const data = JSON.parse(text);
+            displayReservations(data);
+          } catch (error) {
+            document.getElementById('response').innerHTML += `<br><span class="error">Error parsing JSON: ${error.message}</span>`;
+          }
+        })
+        .catch(error => {
+          document.getElementById('response').innerHTML = `<span class="error">Error: ${error.message}</span>`;
+        });
+    });
+    
+    // Display reservations in table
+    function displayReservations(reservations) {
+      const tableBody = document.getElementById('reservations-body');
+      
+      if (!Array.isArray(reservations)) {
+        tableBody.innerHTML = `<tr><td colspan="4" class="error">Error: Expected array but got ${typeof reservations}</td></tr>`;
+        return;
+      }
+      
+      if (reservations.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="4">No reservations found</td></tr>`;
+        return;
+      }
+      
+      reservations.forEach(reservation => {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+          <td>${reservation.reservationID || 'N/A'}</td>
+          <td>${reservation.recipientName || reservation.recipientID || 'Unknown'}</td>
+          <td>${reservation.foodName || reservation.foodID || 'Unknown'}</td>
+          <td>${reservation.status || 'Unknown'}</td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -14,6 +14,34 @@ router.get('/reservations', async (req, res) => {
     }
 });
 
+// Get all reservations with detailed information for volunteer dashboard
+router.get('/all', async (req, res) => {
+    try {
+        const query = `
+            SELECT r.reservationID, r.recipientID, r.foodID, r.status, r.pickupDate, 
+                   r.created_at as reservationDate, 
+                   u.name as recipientName,
+                   COALESCE(f.name, 'Unknown Item') as foodName, 
+                   COALESCE(f.quantity, 1) as quantity, 
+                   COALESCE(fr.location, 'Not specified') as location, 
+                   COALESCE(f.expirationDate, 'Not specified') as expirationDate
+            FROM reservations r
+            LEFT JOIN food_items f ON r.foodID = f.foodID
+            LEFT JOIN fridges fr ON f.fridgeID = fr.fridgeID
+            LEFT JOIN users u ON r.recipientID = u.userID
+            ORDER BY r.created_at DESC
+        `;
+        
+        const results = await db.query(query);
+        console.log(`Found ${results.length} reservations for volunteer dashboard`);
+        
+        res.json(results);
+    } catch (error) {
+        console.error('Error fetching all reservations:', error);
+        res.status(500).json({ error: 'Failed to fetch reservations', details: error.message });
+    }
+});
+
 // Get reservation by ID
 router.get('/reservations/:id', async (req, res) => {
     try {

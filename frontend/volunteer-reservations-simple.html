@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volunteer Reservations Dashboard - Community Fridge</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #2e8b57;
+      --secondary-color: #3cb371;
+      --accent-color: #f0f8ff;
+      --text-color: #333;
+      --light-gray: #f5f5f5;
+      --medium-gray: #e0e0e0;
+      --dark-gray: #888;
+      --success-color: #4caf50;
+      --warning-color: #ff9800;
+      --danger-color: #f44336;
+      --pending-color: #2196f3;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-gray);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 1rem 2rem;
+      position: relative;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: white;
+    }
+    
+    .logo i {
+      font-size: 1.8rem;
+      margin-right: 0.5rem;
+    }
+    
+    .logo h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .back-btn {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .back-btn:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: translateX(-5px);
+    }
+    
+    .back-btn i {
+      margin-right: 0.5rem;
+    }
+    
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    
+    .dashboard-title {
+      margin-bottom: 2rem;
+    }
+    
+    .dashboard-title h2 {
+      font-size: 1.8rem;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+    
+    .dashboard-title p {
+      color: var(--dark-gray);
+    }
+    
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    
+    .table-container {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--medium-gray);
+    }
+    
+    th {
+      font-weight: 600;
+      color: var(--dark-gray);
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    .status-pending {
+      background-color: rgba(33, 150, 243, 0.1);
+      color: var(--pending-color);
+    }
+    
+    .status-approved {
+      background-color: rgba(76, 175, 80, 0.1);
+      color: var(--success-color);
+    }
+    
+    .status-cancelled {
+      background-color: rgba(244, 67, 54, 0.1);
+      color: var(--danger-color);
+    }
+    
+    .action-btn {
+      padding: 0.25rem 0.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      margin-right: 0.25rem;
+    }
+    
+    .approve-btn {
+      background-color: var(--success-color);
+      color: white;
+    }
+    
+    .cancel-btn {
+      background-color: var(--danger-color);
+      color: white;
+    }
+    
+    .view-btn {
+      background-color: var(--dark-gray);
+      color: white;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 2rem;
+    }
+    
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-left-color: var(--primary-color);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .error-message {
+      text-align: center;
+      padding: 2rem;
+      color: var(--danger-color);
+    }
+    
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      color: var(--dark-gray);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <a href="/" class="logo">
+        <i class="fas fa-utensils"></i>
+        <h1>Community Fridge</h1>
+      </a>
+      <button class="back-btn" onclick="window.location.href='/volunteer'">
+        <i class="fas fa-arrow-left"></i> Back to Volunteer Dashboard
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div class="dashboard-title">
+      <h2>Reservations Management Dashboard</h2>
+      <p>Monitor and manage all food reservations across community fridges. Approve pending requests, view details, and ensure smooth operations.</p>
+    </div>
+
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-value" id="pending-count">-</div>
+        <div class="stat-label">Pending Reservations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="approved-count">-</div>
+        <div class="stat-label">Approved Reservations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="cancelled-count">-</div>
+        <div class="stat-label">Cancelled Reservations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="total-count">-</div>
+        <div class="stat-label">Total Reservations</div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Loading reservations...</p>
+      </div>
+      
+      <div id="error" class="error-message" style="display: none;">
+        <i class="fas fa-exclamation-circle"></i>
+        <p id="error-text"></p>
+      </div>
+      
+      <table id="reservations-table" style="display: none;">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Recipient</th>
+            <th>Food Item</th>
+            <th>Pickup Date</th>
+            <th>Location</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="reservations-body">
+          <!-- Reservations will be displayed here -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Community Fridge. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Wait for DOM to load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Fetch reservations
+      fetchReservations();
+    });
+
+    // Fetch reservations from API
+    function fetchReservations() {
+      // Show loading, hide table and error
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('reservations-table').style.display = 'none';
+      document.getElementById('error').style.display = 'none';
+      
+      // Create XMLHttpRequest
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api/manage-reservations/all', true);
+      
+      xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            // Parse JSON response
+            const data = JSON.parse(xhr.responseText);
+            console.log('Fetched reservations:', data);
+            
+            // Display reservations
+            displayReservations(data);
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+            showError('Invalid response format from server');
+          }
+        } else {
+          console.error('Request failed with status:', xhr.status);
+          showError('Failed to fetch reservations from server');
+        }
+      };
+      
+      xhr.onerror = function() {
+        console.error('Network error occurred');
+        showError('Network error occurred while fetching reservations');
+      };
+      
+      xhr.send();
+    }
+
+    // Display reservations
+    function displayReservations(reservations) {
+      // Hide loading
+      document.getElementById('loading').style.display = 'none';
+      
+      if (!reservations || reservations.length === 0) {
+        showError('No reservations found');
+        return;
+      }
+      
+      // Show table
+      document.getElementById('reservations-table').style.display = 'table';
+      
+      // Get table body
+      const tableBody = document.getElementById('reservations-body');
+      tableBody.innerHTML = '';
+      
+      // Count statistics
+      let pendingCount = 0;
+      let approvedCount = 0;
+      let cancelledCount = 0;
+      
+      // Add each reservation to the table
+      reservations.forEach(reservation => {
+        // Format dates
+        const reservationDate = reservation.reservationDate ? new Date(reservation.reservationDate).toLocaleDateString() : 'N/A';
+        const pickupDate = reservation.pickupDate ? new Date(reservation.pickupDate).toLocaleDateString() : 'N/A';
+        
+        // Map status values
+        let status = reservation.status || 'Pending';
+        if (status === 'Confirmed') status = 'Approved';
+        
+        // Count for statistics
+        if (status === 'Pending') pendingCount++;
+        else if (status === 'Approved') approvedCount++;
+        else if (status === 'Cancelled') cancelledCount++;
+        
+        // Create row
+        const row = document.createElement('tr');
+        
+        // Create action buttons based on status
+        let actionButtons = '';
+        if (status === 'Pending') {
+          actionButtons = `
+            <button class="action-btn approve-btn" onclick="approveReservation(${reservation.reservationID})">
+              <i class="fas fa-check"></i> Approve
+            </button>
+            <button class="action-btn cancel-btn" onclick="cancelReservation(${reservation.reservationID})">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          `;
+        } else {
+          actionButtons = `
+            <button class="action-btn view-btn" onclick="viewReservation(${reservation.reservationID})">
+              <i class="fas fa-eye"></i> View
+            </button>
+          `;
+        }
+        
+        // Add row content
+        row.innerHTML = `
+          <td>${reservation.reservationID || 'N/A'}</td>
+          <td>${reservationDate}</td>
+          <td>${reservation.recipientName || 'Unknown'}</td>
+          <td>${reservation.foodName || 'Unknown'} (${reservation.quantity || 1})</td>
+          <td>${pickupDate}</td>
+          <td>${reservation.location || 'N/A'}</td>
+          <td><span class="status-badge status-${status.toLowerCase()}">${status}</span></td>
+          <td>${actionButtons}</td>
+        `;
+        
+        // Add row to table
+        tableBody.appendChild(row);
+      });
+      
+      // Update statistics
+      document.getElementById('pending-count').textContent = pendingCount;
+      document.getElementById('approved-count').textContent = approvedCount;
+      document.getElementById('cancelled-count').textContent = cancelledCount;
+      document.getElementById('total-count').textContent = reservations.length;
+    }
+
+    // Show error message
+    function showError(message) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('reservations-table').style.display = 'none';
+      document.getElementById('error').style.display = 'block';
+      document.getElementById('error-text').textContent = message;
+    }
+
+    // Approve reservation
+    function approveReservation(id) {
+      alert('Approve reservation ' + id + ' (Not implemented)');
+    }
+
+    // Cancel reservation
+    function cancelReservation(id) {
+      alert('Cancel reservation ' + id + ' (Not implemented)');
+    }
+
+    // View reservation
+    function viewReservation(id) {
+      alert('View reservation ' + id + ' (Not implemented)');
+    }
+  </script>
+</body>
+</html>

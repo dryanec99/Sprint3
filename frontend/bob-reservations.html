@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bob's Reservations - Community Fridge</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background-color: #2e8b57;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+      position: relative;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+    header nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-size: 1.1em;
+    }
+    header .back-btn {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      background: linear-gradient(90deg, #2e8b57 0%, #3cb371 100%);
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 1em;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    header .back-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    }
+    main {
+      padding: 40px 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #2e8b57;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    footer {
+      background-color: #2e8b57;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
+    #loading-message {
+      text-align: center;
+      padding: 20px;
+      font-style: italic;
+    }
+    #error-message {
+      text-align: center;
+      padding: 20px;
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="back-btn" onclick="window.history.back()">&larr; Back</button>
+    <h1><a href="/" style="color: white; text-decoration: none;">Community Fridge</a></h1>
+  </header>
+  <main>
+    <h2>Bob's Reservations</h2>
+    <p>Below is a list of the food reservations you've made. Check the details for each reservation including pickup dates and status.</p>
+    
+    <div id="loading-message">Loading your reservations...</div>
+    <div id="error-message" style="display: none;"></div>
+    
+    <table id="reservations-table" style="display: none;">
+      <thead>
+        <tr>
+          <th>Reservation Date</th>
+          <th>Food Item</th>
+          <th>Quantity</th>
+          <th>Preferred Pickup Date</th>
+          <th>Pickup Location</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="reservations-body">
+        <!-- Table content will be populated by JavaScript -->
+      </tbody>
+    </table>
+  </main>
+  <footer>
+    <p>&copy; 2025 Community Fridge. All rights reserved.</p>
+  </footer>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Always use Bob Wilson's ID (5)
+      const bobId = '5';
+      
+      // Elements
+      const loadingMessage = document.getElementById('loading-message');
+      const errorMessage = document.getElementById('error-message');
+      const reservationsTable = document.getElementById('reservations-table');
+      const reservationsBody = document.getElementById('reservations-body');
+      
+      // Fetch Bob's reservations
+      fetchBobReservations();
+      
+      // Function to fetch Bob's reservations
+      async function fetchBobReservations() {
+        try {
+          console.log('Fetching reservations for Bob (ID 5)');
+          
+          // Make API request
+          const response = await fetch(`/api/recipient-reservations/${bobId}`);
+          
+          if (!response.ok) {
+            throw new Error(`Failed to fetch reservations: ${response.status} ${response.statusText}`);
+          }
+          
+          const reservations = await response.json();
+          console.log('Reservations data:', reservations);
+          
+          // Display reservations
+          displayReservations(reservations);
+        } catch (error) {
+          console.error('Error fetching reservations:', error);
+          showError(`Failed to load reservations: ${error.message}`);
+        }
+      }
+      
+      // Function to display reservations
+      function displayReservations(reservations) {
+        // Hide loading message
+        loadingMessage.style.display = 'none';
+        
+        // Check if there are any reservations
+        if (!reservations || reservations.length === 0) {
+          showError('No reservations found. Browse available food and make a reservation!');
+          return;
+        }
+        
+        // Show the table
+        reservationsTable.style.display = 'table';
+        
+        // Clear the table body
+        reservationsBody.innerHTML = '';
+        
+        // Add each reservation to the table
+        reservations.forEach(reservation => {
+          // Format dates
+          const reservationDate = new Date(reservation.reservationDate).toLocaleDateString();
+          const pickupDate = new Date(reservation.pickupDate).toLocaleDateString();
+          
+          // Create table row
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${reservationDate}</td>
+            <td>${reservation.foodName || 'Unknown Item'}</td>
+            <td>${reservation.quantity || 1}</td>
+            <td>${pickupDate}</td>
+            <td>${reservation.location || 'Not specified'}</td>
+            <td>${reservation.status || 'Pending'}</td>
+          `;
+          
+          reservationsBody.appendChild(row);
+        });
+      }
+      
+      // Function to show error message
+      function showError(message) {
+        loadingMessage.style.display = 'none';
+        errorMessage.style.display = 'block';
+        errorMessage.textContent = message;
+      }
+    });
+  </script>
+</body>
+</html>

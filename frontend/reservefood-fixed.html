@@ -348,8 +348,8 @@ document.addEventListener('DOMContentLoaded', function() {
       // Show success message
       alert('Your reservation has been submitted successfully!');
       
-      // Redirect to reservations page with user ID parameter
-      window.location.href = `/reservations?userId=${actualRecipientId}`;
+      // Redirect to recipient's main menu page
+      window.location.href = '/receive';
     })
     .catch(error => {
       console.error('Error submitting reservation:', error);

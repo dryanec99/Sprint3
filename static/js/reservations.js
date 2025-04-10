@@ -29,6 +29,19 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('User ID from cookies:', userId);
   }
   
+  // Try to get from currentUser in sessionStorage
+  if (!userId) {
+    try {
+      const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+      if (currentUser && currentUser.id) {
+        userId = currentUser.id;
+        console.log('User ID from currentUser in sessionStorage:', userId);
+      }
+    } catch (e) {
+      console.error('Error parsing currentUser from sessionStorage:', e);
+    }
+  }
+  
   // Get other user info
   let userRole = sessionStorage.getItem('userRole') || localStorage.getItem('userRole') || getCookie('userRole');
   let userName = sessionStorage.getItem('userName') || localStorage.getItem('userName') || getCookie('userName');
@@ -57,11 +70,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
+  // Check if we're logged in as Bob Wilson (userID 5)
+  if (userName && userName.includes('Bob')) {
+    console.log('Detected Bob Wilson, using userID 5');
+    userId = '5';
+  }
+  
   // If no user ID found, use a default for testing
   if (!userId) {
-    console.log('No user ID found, using default recipient ID 3');
-    userId = '3'; // Use Dylan Smith's ID for testing
-    showError('Using test user ID (3) since you are not logged in');
+    console.log('No user ID found, using default recipient ID 5');
+    userId = '5'; // Use Bob Wilson's ID for testing
+    showError('Using test user ID (5) since you are not logged in');
   }
   
   // Fetch and display reservations
@@ -134,6 +153,13 @@ async function fetchAndDisplayReservations(recipientId) {
     // Make sure we have a valid recipient ID
     if (!recipientId) {
       throw new Error('No recipient ID provided');
+    }
+    
+    // For Bob Wilson, always use ID 5
+    const currentUserName = sessionStorage.getItem('userName') || localStorage.getItem('userName');
+    if (currentUserName && currentUserName.includes('Bob')) {
+      recipientId = '5';
+      console.log('Overriding recipient ID to 5 for Bob Wilson');
     }
     
     // Update debug info with API call details

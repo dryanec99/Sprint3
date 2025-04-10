@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Volunteer Reservations Dashboard - Community Fridge</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Global Styles */
+    :root {
+      --primary-color: #2e8b57;
+      --secondary-color: #3cb371;
+      --accent-color: #f0f8ff;
+      --text-color: #333;
+      --light-gray: #f5f5f5;
+      --medium-gray: #e0e0e0;
+      --dark-gray: #888;
+      --success-color: #4caf50;
+      --warning-color: #ff9800;
+      --danger-color: #f44336;
+      --pending-color: #2196f3;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-gray);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    /* Header Styles */
+    header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 1rem 2rem;
+      position: relative;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: white;
+    }
+    
+    .logo i {
+      font-size: 1.8rem;
+      margin-right: 0.5rem;
+    }
+    
+    .logo h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .back-btn {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .back-btn:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: translateX(-5px);
+    }
+    
+    .back-btn i {
+      margin-right: 0.5rem;
+    }
+    
+    /* Main Content */
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .dashboard-title {
+      margin-bottom: 0.5rem;
+    }
+    
+    .dashboard-title h2 {
+      font-size: 1.8rem;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+    
+    .dashboard-title p {
+      color: var(--dark-gray);
+      max-width: 600px;
+    }
+    
+    .dashboard-actions {
+      display: flex;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    
+    .filter-dropdown {
+      position: relative;
+    }
+    
+    .filter-btn, .refresh-btn {
+      background-color: white;
+      border: 1px solid var(--medium-gray);
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .filter-btn:hover, .refresh-btn:hover {
+      background-color: var(--accent-color);
+      border-color: var(--primary-color);
+    }
+    
+    .filter-dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .filter-dropdown-content a {
+      color: var(--text-color);
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      transition: background-color 0.2s;
+    }
+    
+    .filter-dropdown-content a:hover {
+      background-color: var(--light-gray);
+    }
+    
+    .filter-dropdown:hover .filter-dropdown-content {
+      display: block;
+    }
+    
+    /* Stats Cards */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+    
+    .stat-icon.pending {
+      background-color: rgba(33, 150, 243, 0.1);
+      color: var(--pending-color);
+    }
+    
+    .stat-icon.approved {
+      background-color: rgba(76, 175, 80, 0.1);
+      color: var(--success-color);
+    }
+    
+    .stat-icon.cancelled {
+      background-color: rgba(244, 67, 54, 0.1);
+      color: var(--danger-color);
+    }
+    
+    .stat-icon.total {
+      background-color: rgba(156, 39, 176, 0.1);
+      color: #9c27b0;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+      color: var(--dark-gray);
+      font-size: 0.9rem;
+    }
+    
+    /* Reservations Table */
+    .reservations-container {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    
+    .table-header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .table-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    
+    .search-container {
+      position: relative;
+    }
+    
+    .search-input {
+      padding: 0.5rem 1rem 0.5rem 2.5rem;
+      border: none;
+      border-radius: 50px;
+      width: 250px;
+      font-size: 0.9rem;
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--dark-gray);
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--medium-gray);
+    }
+    
+    th {
+      background-color: var(--accent-color);
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+    
+    tr:hover {
+      background-color: var(--light-gray);
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    .status-pending {
+      background-color: rgba(33, 150, 243, 0.1);
+      color: var(--pending-color);
+    }
+    
+    .status-approved {
+      background-color: rgba(76, 175, 80, 0.1);
+      color: var(--success-color);
+    }
+    
+    .status-cancelled {
+      background-color: rgba(244, 67, 54, 0.1);
+      color: var(--danger-color);
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .action-btn {
+      border: none;
+      border-radius: 4px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: all 0.2s ease;
+    }
+    
+    .approve-btn {
+      background-color: rgba(76, 175, 80, 0.1);
+      color: var(--success-color);
+    }
+    
+    .approve-btn:hover {
+      background-color: var(--success-color);
+      color: white;
+    }
+    
+    .cancel-btn {
+      background-color: rgba(244, 67, 54, 0.1);
+      color: var(--danger-color);
+    }
+    
+    .cancel-btn:hover {
+      background-color: var(--danger-color);
+      color: white;
+    }
+    
+    .view-btn {
+      background-color: rgba(33, 150, 243, 0.1);
+      color: var(--pending-color);
+    }
+    
+    .view-btn:hover {
+      background-color: var(--pending-color);
+      color: white;
+    }
+    
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+      padding: 1rem;
+    }
+    
+    .pagination-btn {
+      border: 1px solid var(--medium-gray);
+      background-color: white;
+      padding: 0.5rem 1rem;
+      margin: 0 0.25rem;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+    
+    .pagination-btn:hover, .pagination-btn.active {
+      background-color: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+    }
+    
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-content {
+      background-color: white;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      animation: modalFadeIn 0.3s;
+    }
+    
+    @keyframes modalFadeIn {
+      from {opacity: 0; transform: translateY(-20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+    
+    .modal-header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1rem;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    
+    .close-modal {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+    }
+    
+    .reservation-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .detail-group {
+      margin-bottom: 1rem;
+    }
+    
+    .detail-label {
+      font-size: 0.9rem;
+      color: var(--dark-gray);
+      margin-bottom: 0.25rem;
+    }
+    
+    .detail-value {
+      font-weight: 500;
+    }
+    
+    .modal-footer {
+      padding: 1rem;
+      border-top: 1px solid var(--medium-gray);
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+    
+    .modal-btn {
+      padding: 0.5rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    
+    .cancel-modal-btn {
+      background-color: var(--medium-gray);
+      color: var(--text-color);
+    }
+    
+    .cancel-modal-btn:hover {
+      background-color: var(--dark-gray);
+      color: white;
+    }
+    
+    .approve-modal-btn {
+      background-color: var(--success-color);
+      color: white;
+    }
+    
+    .approve-modal-btn:hover {
+      background-color: #388e3c;
+    }
+    
+    /* Loading Spinner */
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+    }
+    
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid var(--primary-color);
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 1rem;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      display: none;
+    }
+    
+    .empty-icon {
+      font-size: 3rem;
+      color: var(--dark-gray);
+      margin-bottom: 1rem;
+    }
+    
+    .empty-text {
+      color: var(--dark-gray);
+      margin-bottom: 1.5rem;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .search-input {
+        width: 100%;
+      }
+      
+      .table-responsive {
+        overflow-x: auto;
+      }
+      
+      th, td {
+        padding: 0.75rem 0.5rem;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+    }
+    
+    /* Footer */
+    footer {
+      background-color: var(--primary-color);
+      color: white;
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <a href="/" class="logo">
+        <i class="fas fa-utensils"></i>
+        <h1>Community Fridge</h1>
+      </a>
+      <button class="back-btn" onclick="window.location.href='/volunteer'">
+        <i class="fas fa-arrow-left"></i> Back to Volunteer Dashboard
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div class="dashboard-header">
+      <div class="dashboard-title">
+        <h2>Reservations Management Dashboard</h2>
+        <p>Monitor and manage all food reservations across community fridges. Approve pending requests, view details, and ensure smooth operations.</p>
+      </div>
+      <div class="dashboard-actions">
+        <div class="filter-dropdown">
+          <button class="filter-btn">
+            <i class="fas fa-filter"></i> Filter Status
+          </button>
+          <div class="filter-dropdown-content">
+            <a href="#" data-filter="all">All Reservations</a>
+            <a href="#" data-filter="pending">Pending</a>
+            <a href="#" data-filter="approved">Approved</a>
+            <a href="#" data-filter="cancelled">Cancelled</a>
+          </div>
+        </div>
+        <button class="refresh-btn" onclick="refreshReservations()">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+      </div>
+    </div>
+
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-icon pending">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-value" id="pending-count">0</div>
+        <div class="stat-label">Pending Reservations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon approved">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-value" id="approved-count">0</div>
+        <div class="stat-label">Approved Reservations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon cancelled">
+          <i class="fas fa-times-circle"></i>
+        </div>
+        <div class="stat-value" id="cancelled-count">0</div>
+        <div class="stat-label">Cancelled Reservations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon total">
+          <i class="fas fa-list"></i>
+        </div>
+        <div class="stat-value" id="total-count">0</div>
+        <div class="stat-label">Total Reservations</div>
+      </div>
+    </div>
+
+    <div class="reservations-container">
+      <div class="table-header">
+        <div class="table-title">All Reservations</div>
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" class="search-input" placeholder="Search reservations..." id="search-input">
+        </div>
+      </div>
+      
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Date</th>
+              <th>Recipient</th>
+              <th>Food Item</th>
+              <th>Pickup Date</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="reservations-table-body">
+            <!-- Table content will be populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="loading-spinner" id="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading reservations...</p>
+      </div>
+      
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon">
+          <i class="fas fa-calendar-times"></i>
+        </div>
+        <h3>No Reservations Found</h3>
+        <p class="empty-text">There are currently no reservations in the system.</p>
+      </div>
+      
+      <div class="pagination" id="pagination">
+        <!-- Pagination will be populated by JavaScript -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Reservation Details Modal -->
+  <div class="modal" id="reservation-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Reservation Details</div>
+        <button class="close-modal" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="reservation-details" id="modal-reservation-details">
+          <!-- Reservation details will be populated by JavaScript -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn cancel-modal-btn" onclick="closeModal()">Close</button>
+        <button class="modal-btn approve-modal-btn" id="modal-action-btn">Approve</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Community Fridge. All rights reserved.</p>
+  </footer>
+
+  <script src="/static/js/volunteer-reservations.js"></script>
+</body>
+</html>

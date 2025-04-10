@@ -19,10 +19,11 @@ router.get('/:recipientId', async (req, res) => {
                    r.created_at as reservationDate, 
                    COALESCE(f.name, 'Unknown Item') as foodName, 
                    COALESCE(f.quantity, 1) as quantity, 
-                   COALESCE(f.location, 'Not specified') as location, 
+                   COALESCE(fr.location, 'Not specified') as location, 
                    COALESCE(f.expirationDate, 'Not specified') as expirationDate
             FROM reservations r
             LEFT JOIN food_items f ON r.foodID = f.foodID
+            LEFT JOIN fridges fr ON f.fridgeID = fr.fridgeID
             WHERE r.recipientID = ?
             ORDER BY r.created_at DESC
         `;
