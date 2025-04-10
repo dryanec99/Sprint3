@@ -9,16 +9,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Display user information on the dashboard
 function displayUserInfo() {
-  // Get current user from session storage
-  const currentUser = sessionStorage.getItem('currentUser');
+  // Get user data from localStorage (set during login)
+  const userId = localStorage.getItem('userId');
+  const userName = localStorage.getItem('userName');
+  const userRole = localStorage.getItem('userRole');
   
-  if (!currentUser) {
+  if (!userId || !userName || !userRole) {
     // If no user is logged in, redirect to login page
     window.location.href = 'login.html';
     return;
   }
   
-  const user = JSON.parse(currentUser);
+  // Create user object from localStorage data
+  const user = {
+    id: userId,
+    username: userName,
+    type: userRole.toLowerCase() // Convert to lowercase for compatibility
+  };
+  
+  // Update sessionStorage with the correct user data
+  sessionStorage.setItem('currentUser', JSON.stringify(user));
   
   // Check if we have a header element to update
   const header = document.querySelector('header');

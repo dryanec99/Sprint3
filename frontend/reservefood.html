@@ -111,6 +111,13 @@
       border-radius: 5px;
       border: 1px solid #ddd;
     }
+    .basket-summary {
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
@@ -121,30 +128,22 @@
 </header>
 
 <main>
+  <div id="basketSummary" class="basket-summary">
+    <h2>Your Selected Items</h2>
+    <div id="basketItemsList">
+      <!-- Basket items will be displayed here -->
+      <p class="loading">Loading your selected items...</p>
+    </div>
+  </div>
+
   <form id="reservationForm">
-    <h2>Reserve Food</h2>
+    <h2>Complete Your Reservation</h2>
 
     <!-- Pickup Location (Dropdown) -->
     <label for="pickupLocation">Pickup Location:</label>
     <select id="pickupLocation" name="pickupLocation" required>
       <option value="">Select Location</option>
     </select>
-
-    <!-- Food Category (Dropdown) -->
-    <label for="foodCategory">Food Category:</label>
-    <select id="foodCategory" name="foodCategory" required>
-      <option value="">Select Category</option>
-    </select>
-
-    <!-- Food Item (Dropdown) -->
-    <label for="foodItem">Food Item:</label>
-    <select id="foodItem" name="foodItem" required>
-      <option value="">Select Food Item</option>
-    </select>
-
-    <!-- Quantity Needed -->
-    <label for="quantity">Quantity Needed:</label>
-    <input type="number" id="quantity" name="quantity" placeholder="Enter quantity" required>
 
     <!-- Preferred Pickup Date -->
     <label for="pickupDate">Preferred Pickup Date:</label>
@@ -167,8 +166,7 @@
 </footer>
 
 <!-- Include JavaScript files -->
-<script src="/static/js/reservations.js"></script>
-<script src="/static/js/reserve-food.js"></script>
+<script src="../static/js/basket-reservation.js"></script>
 
 </body>
 </html>

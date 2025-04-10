@@ -231,6 +231,14 @@
         localStorage.setItem('userName', data.user.name);
         localStorage.setItem('userRole', data.user.role);
         
+        // Also store in sessionStorage for the current session
+        const userData = {
+          id: data.user.id,
+          username: data.user.name,
+          type: data.user.role.toLowerCase() // Convert role to lowercase for compatibility
+        };
+        sessionStorage.setItem('currentUser', JSON.stringify(userData));
+        
         // Redirect based on user role
         switch (data.user.role) {
           case 'Donor':

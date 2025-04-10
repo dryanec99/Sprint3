@@ -49,49 +49,172 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-    table, th, td {
-      border: 1px solid #ddd;
+      margin-top: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
     }
     th, td {
-      padding: 12px;
+      padding: 15px;
       text-align: left;
+      border-bottom: 1px solid #ddd;
     }
     th {
       background-color: #2e8b57;
       color: white;
+      font-weight: bold;
     }
     tr:nth-child(even) {
       background-color: #f2f2f2;
+    }
+    tr:hover {
+      background-color: #e9e9e9;
+      cursor: pointer;
+    }
+    .loading, .error {
+      text-align: center;
+      padding: 20px;
+      color: #777;
+    }
+    .error {
+      color: #e74c3c;
     }
     footer {
       background-color: #2e8b57;
       color: white;
       text-align: center;
-      padding: 15px;
+      padding: 20px;
       margin-top: 40px;
-      bottom: 0;
-      width: 100%;
+    }
+    
+    /* Shopping Basket Styles */
+    .basket-icon {
       position: fixed;
-    }
-    .loading {
-      text-align: center;
-      padding: 20px;
-      font-style: italic;
-      color: #666;
-    }
-    .error {
-      text-align: center;
-      padding: 20px;
-      color: #d9534f;
-    }
-    tr {
+      top: 20px;
+      right: 20px;
+      background-color: #2e8b57;
+      color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       cursor: pointer;
-      transition: background-color 0.2s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      z-index: 100;
     }
-    tr:hover {
-      background-color: #e8f5e9;
+    
+    .basket-count {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background-color: #e74c3c;
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+    }
+    
+    .basket-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 101;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .basket-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    .basket-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .basket-item-info {
+      flex: 1;
+    }
+    
+    .basket-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    
+    .btn-primary {
+      background-color: #2e8b57;
+      color: white;
+    }
+    
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+    
+    .btn-danger {
+      background-color: #e74c3c;
+      color: white;
+    }
+    
+    .add-to-basket {
+      padding: 5px 10px;
+      background-color: #2e8b57;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .add-to-basket:hover {
+      background-color: #3cb371;
+    }
+    
+    .quantity-selector {
+      display: flex;
+      align-items: center;
+    }
+    
+    .quantity-selector button {
+      width: 30px;
+      height: 30px;
+      border: none;
+      background-color: #f0f0f0;
+      cursor: pointer;
+    }
+    
+    .quantity-selector input {
+      width: 40px;
+      height: 30px;
+      text-align: center;
+      border: 1px solid #ddd;
     }
   </style>
 </head>
@@ -100,9 +223,32 @@
   <button class="back-btn" onclick="window.history.back()">&larr; Back</button>
   <h1><a href="/" style="color: white; text-decoration: none;">Community Fridge</a></h1>
 </header>
+
+<!-- Shopping Basket Icon -->
+<div class="basket-icon" id="basketIcon">
+  <i>🛒</i>
+  <span class="basket-count" id="basketCount">0</span>
+</div>
+
+<!-- Shopping Basket Modal -->
+<div class="basket-modal" id="basketModal">
+  <div class="basket-content">
+    <h2>Your Basket</h2>
+    <div id="basketItems">
+      <!-- Basket items will be added here dynamically -->
+      <p class="empty-basket">Your basket is empty.</p>
+    </div>
+    <div class="basket-actions">
+      <button class="btn btn-secondary" id="continueShoppingBtn">Continue Shopping</button>
+      <button class="btn btn-danger" id="clearBasketBtn">Clear Basket</button>
+      <button class="btn btn-primary" id="checkoutBtn">Proceed to Checkout</button>
+    </div>
+  </div>
+</div>
+
 <main>
   <h2>Available Food for Collection</h2>
-  <p>Below is the current list of food items available for collection from our community fridges. Please review and reserve your desired items.</p>
+  <p>Below is the current list of food items available for collection from our community fridges. Click "Add to Basket" to select items you'd like to reserve.</p>
   <table>
     <thead>
     <tr>
@@ -111,11 +257,12 @@
       <th>Quantity</th>
       <th>Expiration Date</th>
       <th>Location</th>
+      <th>Action</th>
     </tr>
     </thead>
     <tbody>
       <tr>
-        <td colspan="5" class="loading">Loading food items...</td>
+        <td colspan="6" class="loading">Loading food items...</td>
       </tr>
     </tbody>
   </table>
@@ -127,11 +274,22 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const tbody = document.querySelector('tbody');
+    const basketIcon = document.getElementById('basketIcon');
+    const basketModal = document.getElementById('basketModal');
+    const basketCount = document.getElementById('basketCount');
+    const basketItems = document.getElementById('basketItems');
+    const continueShoppingBtn = document.getElementById('continueShoppingBtn');
+    const clearBasketBtn = document.getElementById('clearBasketBtn');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    
+    // Initialize basket from localStorage or create empty basket
+    let basket = JSON.parse(localStorage.getItem('foodBasket')) || [];
+    updateBasketCount();
     
     // Show loading message
     tbody.innerHTML = `
       <tr>
-        <td colspan="5" class="loading">Loading food items...</td>
+        <td colspan="6" class="loading">Loading food items...</td>
       </tr>
     `;
     
@@ -151,7 +309,7 @@
         if (data.length === 0) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="5" class="loading">No food items are currently available. Please check back later.</td>
+              <td colspan="6" class="loading">No food items are currently available. Please check back later.</td>
             </tr>
           `;
           return;
@@ -175,27 +333,209 @@
             <td>${item.quantity}</td>
             <td>${formattedDate}</td>
             <td>${item.location}</td>
+            <td><button class="add-to-basket" data-id="${item.foodID}">Add to Basket</button></td>
           `;
           
           // Add data attribute for the food ID
           row.setAttribute('data-food-id', item.foodID);
           
-          // Add click event to redirect to reserve page
-          row.addEventListener('click', function() {
-            window.location.href = `reservefood.html?foodId=${item.foodID}`;
-          });
-          
           tbody.appendChild(row);
+        });
+        
+        // Add event listeners to "Add to Basket" buttons
+        document.querySelectorAll('.add-to-basket').forEach(button => {
+          button.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent row click event
+            const foodId = this.getAttribute('data-id');
+            const row = this.closest('tr');
+            const foodItem = {
+              id: foodId,
+              name: row.cells[0].textContent,
+              status: row.cells[1].textContent,
+              availableQuantity: parseInt(row.cells[2].textContent),
+              quantity: 1,
+              expirationDate: row.cells[3].textContent,
+              location: row.cells[4].textContent
+            };
+            
+            addToBasket(foodItem);
+          });
         });
       })
       .catch(error => {
         console.error('Error fetching food data:', error);
         tbody.innerHTML = `
           <tr>
-            <td colspan="5" class="error">Error loading food items. Please try again later.</td>
+            <td colspan="6" class="error">Error loading food items. Please try again later.</td>
           </tr>
         `;
       });
+    
+    // Basket Icon Click - Show Basket Modal
+    basketIcon.addEventListener('click', function() {
+      showBasketModal();
+    });
+    
+    // Continue Shopping Button - Hide Basket Modal
+    continueShoppingBtn.addEventListener('click', function() {
+      basketModal.style.display = 'none';
+    });
+    
+    // Clear Basket Button - Clear All Items
+    clearBasketBtn.addEventListener('click', function() {
+      if (confirm('Are you sure you want to clear your basket?')) {
+        basket = [];
+        saveBasket();
+        updateBasketCount();
+        showBasketModal(); // Refresh the modal
+      }
+    });
+    
+    // Checkout Button - Go to Reservation Form
+    checkoutBtn.addEventListener('click', function() {
+      if (basket.length === 0) {
+        alert('Your basket is empty. Please add items before proceeding to checkout.');
+        return;
+      }
+      
+      // Redirect to reservation form with basket data
+      window.location.href = '/reservefood';
+    });
+    
+    // Add item to basket
+    function addToBasket(item) {
+      // Check if item is already in basket
+      const existingItem = basket.find(i => i.id === item.id);
+      
+      if (existingItem) {
+        // Increment quantity if already in basket
+        if (existingItem.quantity < existingItem.availableQuantity) {
+          existingItem.quantity++;
+          alert(`Increased quantity of ${item.name} in your basket.`);
+        } else {
+          alert(`Cannot add more of ${item.name}. Maximum available quantity reached.`);
+          return;
+        }
+      } else {
+        // Add new item to basket
+        basket.push(item);
+        alert(`${item.name} added to your basket.`);
+      }
+      
+      saveBasket();
+      updateBasketCount();
+    }
+    
+    // Save basket to localStorage
+    function saveBasket() {
+      localStorage.setItem('foodBasket', JSON.stringify(basket));
+    }
+    
+    // Update basket count display
+    function updateBasketCount() {
+      const totalItems = basket.reduce((total, item) => total + item.quantity, 0);
+      basketCount.textContent = totalItems;
+      
+      if (totalItems > 0) {
+        basketCount.style.display = 'flex';
+      } else {
+        basketCount.style.display = 'none';
+      }
+    }
+    
+    // Show basket modal with current items
+    function showBasketModal() {
+      // Clear previous content
+      basketItems.innerHTML = '';
+      
+      if (basket.length === 0) {
+        basketItems.innerHTML = '<p class="empty-basket">Your basket is empty.</p>';
+      } else {
+        // Add each item to the modal
+        basket.forEach((item, index) => {
+          const basketItem = document.createElement('div');
+          basketItem.className = 'basket-item';
+          basketItem.innerHTML = `
+            <div class="basket-item-info">
+              <h4>${item.name}</h4>
+              <p>Location: ${item.location}</p>
+              <p>Expires: ${item.expirationDate}</p>
+            </div>
+            <div class="quantity-selector">
+              <button class="decrease-quantity" data-index="${index}">-</button>
+              <input type="number" value="${item.quantity}" min="1" max="${item.availableQuantity}" data-index="${index}">
+              <button class="increase-quantity" data-index="${index}">+</button>
+            </div>
+            <button class="btn btn-danger remove-item" data-index="${index}">Remove</button>
+          `;
+          basketItems.appendChild(basketItem);
+        });
+        
+        // Add event listeners to quantity buttons
+        document.querySelectorAll('.decrease-quantity').forEach(button => {
+          button.addEventListener('click', function() {
+            const index = this.getAttribute('data-index');
+            if (basket[index].quantity > 1) {
+              basket[index].quantity--;
+              saveBasket();
+              updateBasketCount();
+              showBasketModal(); // Refresh the modal
+            }
+          });
+        });
+        
+        document.querySelectorAll('.increase-quantity').forEach(button => {
+          button.addEventListener('click', function() {
+            const index = this.getAttribute('data-index');
+            if (basket[index].quantity < basket[index].availableQuantity) {
+              basket[index].quantity++;
+              saveBasket();
+              updateBasketCount();
+              showBasketModal(); // Refresh the modal
+            }
+          });
+        });
+        
+        document.querySelectorAll('.quantity-selector input').forEach(input => {
+          input.addEventListener('change', function() {
+            const index = this.getAttribute('data-index');
+            let value = parseInt(this.value);
+            
+            // Validate input
+            if (isNaN(value) || value < 1) {
+              value = 1;
+            } else if (value > basket[index].availableQuantity) {
+              value = basket[index].availableQuantity;
+            }
+            
+            basket[index].quantity = value;
+            this.value = value; // Update input with validated value
+            saveBasket();
+            updateBasketCount();
+          });
+        });
+        
+        document.querySelectorAll('.remove-item').forEach(button => {
+          button.addEventListener('click', function() {
+            const index = this.getAttribute('data-index');
+            basket.splice(index, 1);
+            saveBasket();
+            updateBasketCount();
+            showBasketModal(); // Refresh the modal
+          });
+        });
+      }
+      
+      // Display the modal
+      basketModal.style.display = 'flex';
+    }
+    
+    // Close modal when clicking outside the content
+    basketModal.addEventListener('click', function(e) {
+      if (e.target === basketModal) {
+        basketModal.style.display = 'none';
+      }
+    });
   });
 </script>
 </body>

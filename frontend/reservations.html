@@ -92,6 +92,12 @@
   <main>
     <h2>Your Reservations</h2>
     <p>Below is a list of the food reservations you've made. Check the details for each reservation including pickup dates and status.</p>
+    <div id="debug-info" style="background-color: #f8f9fa; padding: 10px; margin-bottom: 15px; border-radius: 5px; display: none;">
+      <h4>Debug Information</h4>
+      <pre id="debug-content">Loading user information...</pre>
+      <button onclick="document.getElementById('debug-info').style.display = 'none';">Hide Debug Info</button>
+    </div>
+    <button onclick="document.getElementById('debug-info').style.display = 'block';" style="margin-bottom: 15px;">Show Debug Info</button>
     <table>
       <thead>
         <tr>

@@ -62,6 +62,110 @@ router.post('/reserve', async (req, res) => {
     }
 });
 
+// Reserve multiple food items from basket
+router.post('/basket', async (req, res) => {
+    try {
+        const { recipientId, pickupLocation, pickupDate, contactInfo, additionalNotes, items } = req.body;
+        
+        console.log('Received reservation request:', { recipientId, pickupLocation, pickupDate, items });
+        
+        if (!recipientId || !pickupLocation || !pickupDate || !contactInfo || !items || !Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+        
+        // Start a transaction to ensure all reservations are processed together
+        const connection = await db.getConnection();
+        await connection.beginTransaction();
+        
+        try {
+            // Process each food item in the basket as a separate reservation
+            // (since the reservations table has a direct foodID field)
+            const createdReservations = [];
+            
+            for (const item of items) {
+                // Check if food item exists and has enough quantity
+                const checkFoodQuery = `
+                    SELECT * FROM food_items 
+                    WHERE foodID = ? AND quantity >= ?
+                `;
+                
+                const [foodResults] = await connection.query(checkFoodQuery, [item.foodId, item.quantity]);
+                
+                if (!foodResults || foodResults.length === 0) {
+                    console.log(`Food item with ID ${item.foodId} not found or has insufficient quantity`);
+                    continue; // Skip this item but continue with others
+                }
+                
+                // Create reservation record for this food item
+                const reservationQuery = `
+                    INSERT INTO reservations (recipientID, foodID, status, pickupDate, created_at)
+                    VALUES (?, ?, 'Pending', ?, NOW())
+                `;
+                
+                const [result] = await connection.query(reservationQuery, [
+                    recipientId,
+                    item.foodId,
+                    pickupDate
+                ]);
+                
+                createdReservations.push({
+                    reservationId: result.insertId,
+                    foodId: item.foodId,
+                    quantity: item.quantity
+                });
+                
+                // Update food item quantity
+                const updateFoodQuery = `
+                    UPDATE food_items 
+                    SET quantity = quantity - ?, 
+                        status = CASE WHEN (quantity - ?) <= 0 THEN 'Reserved' ELSE status END
+                    WHERE foodID = ?
+                `;
+                
+                await connection.query(updateFoodQuery, [
+                    item.quantity,
+                    item.quantity,
+                    item.foodId
+                ]);
+            }
+            
+            // Commit the transaction if we created at least one reservation
+            if (createdReservations.length > 0) {
+                await connection.commit();
+                
+                // Return success response
+                res.status(201).json({
+                    success: true,
+                    message: 'Reservations created successfully',
+                    reservations: createdReservations
+                });
+            } else {
+                // If no reservations were created, rollback and return an error
+                await connection.rollback();
+                res.status(400).json({
+                    success: false,
+                    message: 'No valid food items found in basket'
+                });
+            }
+        } catch (error) {
+            // Rollback transaction if there's an error
+            await connection.rollback();
+            console.error('Transaction error:', error);
+            throw error;
+        } finally {
+            // Release the connection
+            connection.release();
+        }
+        
+    } catch (error) {
+        console.error('Error creating basket reservation:', error);
+        res.status(500).json({ 
+            error: 'Failed to create reservation', 
+            details: error.message 
+        });
+    }
+});
+
 // Get reservation details
 router.get('/reservation/:id', async (req, res) => {
     try {

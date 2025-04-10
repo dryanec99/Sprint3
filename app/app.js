@@ -20,6 +20,8 @@ const testDonationRoutes = require('./routes/test-donation');
 const foodRoutes = require('./routes/food'); 
 const directDonationRoutes = require('./routes/direct-donation'); 
 const messagesRoutes = require('./routes/messages'); 
+const fridgesRoutes = require('./routes/fridges'); 
+const recipientReservationsRoutes = require('./routes/recipient-reservations'); 
 
 // Create express app
 var app = express();
@@ -46,6 +48,8 @@ app.use('/api/test-donation', testDonationRoutes);
 app.use('/api/food', foodRoutes); 
 app.use('/api/direct-donation', directDonationRoutes); 
 app.use('/api/messages', messagesRoutes); 
+app.use('/api/fridges', fridgesRoutes); 
+app.use('/api/recipient-reservations', recipientReservationsRoutes); 
 
 // Create a route for root - /
 app.get("/", function(req, res) {
@@ -95,7 +99,7 @@ app.get("/test-donation-history", function(req, res) {
     res.sendFile(path.join(__dirname, "..", "frontend", "test-donation-history.html"));
 });
 app.get("/reservefood", function(req, res) {
-    res.sendFile(path.join(__dirname, "..", "frontend", "reservefood.html"));
+    res.sendFile(path.join(__dirname, "..", "frontend", "reservefood-fixed.html"));
 });
 app.get("/reservations", function(req, res) {
     res.sendFile(path.join(__dirname, "..", "frontend", "reservations.html"));

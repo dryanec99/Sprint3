@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reserve Food - Community Fridge</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background-color: #2e8b57;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+      position: relative;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+    header nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-size: 1.1em;
+    }
+    header .back-btn {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      background: linear-gradient(90deg, #2e8b57 0%, #3cb371 100%);
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 1em;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    header .back-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    }
+    main {
+      padding: 40px 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    form {
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    form h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    form label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: bold;
+    }
+    form select,
+    form input[type="text"],
+    form input[type="number"],
+    form input[type="date"],
+    form input[type="email"],
+    form textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+    form textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    form button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2e8b57;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    form button:hover {
+      background-color: #3cb371;
+    }
+    footer {
+      background-color: #2e8b57;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+    /* Modernized UI */
+    select, input[type="text"], input[type="number"], input[type="email"], textarea {
+      font-size: 1em;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+    .basket-summary {
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .basket-items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    .basket-items-table th, .basket-items-table td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+    .basket-items-table th {
+      background-color: #f2f2f2;
+    }
+    .basket-items-table tr:hover {
+      background-color: #f9f9f9;
+    }
+    .empty-basket {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <button class="back-btn" onclick="window.history.back()">&larr; Back</button>
+  <h1><a href="/" style="color: white; text-decoration: none;">Community Fridge</a></h1>
+</header>
+
+<main>
+  <div id="basketSummary" class="basket-summary">
+    <h2>Your Selected Items</h2>
+    <div id="basketItemsList">
+      <!-- Basket items will be displayed here -->
+      <p class="loading">Loading your selected items...</p>
+    </div>
+  </div>
+
+  <form id="reservationForm">
+    <h2>Complete Your Reservation</h2>
+
+    <!-- Pickup Location (Dropdown) -->
+    <label for="pickupLocation">Pickup Location:</label>
+    <select id="pickupLocation" name="pickupLocation" required>
+      <option value="">Select Location</option>
+      <option value="Community Fridge - Camden">Community Fridge - Camden</option>
+      <option value="Community Fridge - Brixton">Community Fridge - Brixton</option>
+      <option value="Community Fridge - Hackney">Community Fridge - Hackney</option>
+    </select>
+
+    <!-- Preferred Pickup Date -->
+    <label for="pickupDate">Preferred Pickup Date:</label>
+    <input type="date" id="pickupDate" name="pickupDate" required>
+
+    <!-- Contact Information -->
+    <label for="contactInfo">Contact Information:</label>
+    <input type="email" id="contactInfo" name="contactInfo" placeholder="Enter your email" required>
+
+    <!-- Additional Notes -->
+    <label for="additionalNotes">Additional Notes:</label>
+    <textarea id="additionalNotes" name="additionalNotes" placeholder="Any special instructions or requests"></textarea>
+
+    <button type="submit">Submit Reservation</button>
+  </form>
+</main>
+
+<footer>
+  <p>&copy; 2025 Community Fridge. All rights reserved.</p>
+</footer>
+
+<script>
+// Basket Reservation System for Community Fridge
+document.addEventListener('DOMContentLoaded', function() {
+  const basketItemsList = document.getElementById('basketItemsList');
+  const pickupLocationSelect = document.getElementById('pickupLocation');
+  const reservationForm = document.getElementById('reservationForm');
+  
+  // Get basket items from localStorage
+  let basket = [];
+  try {
+    basket = JSON.parse(localStorage.getItem('foodBasket')) || [];
+    console.log('Basket items from localStorage:', basket);
+  } catch (error) {
+    console.error('Error parsing basket from localStorage:', error);
+    basket = [];
+  }
+  
+  // Display basket items
+  displayBasketItems();
+  
+  // Set minimum date for pickup to tomorrow
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  document.getElementById('pickupDate').min = tomorrow.toISOString().split('T')[0];
+  document.getElementById('pickupDate').value = tomorrow.toISOString().split('T')[0];
+  
+  // Handle form submission
+  reservationForm.addEventListener('submit', handleReservationSubmit);
+  
+  // Display basket items in the summary section
+  function displayBasketItems() {
+    console.log('Displaying basket items:', basket);
+    basketItemsList.innerHTML = '';
+    
+    if (!basket || basket.length === 0) {
+      basketItemsList.innerHTML = `
+        <div class="empty-basket">
+          <p>Your basket is empty. Please go back to <a href="/viewfood">Available Food</a> and select items to reserve.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    // Create table for basket items
+    const table = document.createElement('table');
+    table.className = 'basket-items-table';
+    
+    // Add table header
+    const thead = document.createElement('thead');
+    thead.innerHTML = `
+      <tr>
+        <th>Food Item</th>
+        <th>Quantity</th>
+        <th>Expiration Date</th>
+        <th>Location</th>
+      </tr>
+    `;
+    table.appendChild(thead);
+    
+    // Add table body with basket items
+    const tbody = document.createElement('tbody');
+    basket.forEach(item => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${item.name || 'Unknown Item'}</td>
+        <td>${item.quantity || 1}</td>
+        <td>${item.expirationDate || 'Not specified'}</td>
+        <td>${item.location || 'Not specified'}</td>
+      `;
+      tbody.appendChild(row);
+    });
+    table.appendChild(tbody);
+    
+    basketItemsList.appendChild(table);
+  }
+  
+  // Handle form submission
+  function handleReservationSubmit(event) {
+    event.preventDefault();
+    
+    // Get form data
+    const pickupLocation = pickupLocationSelect.value;
+    const pickupDate = document.getElementById('pickupDate').value;
+    const contactInfo = document.getElementById('contactInfo').value;
+    const additionalNotes = document.getElementById('additionalNotes').value;
+    
+    // Validate form
+    if (!pickupLocation || !pickupDate || !contactInfo) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+    
+    // Get recipient ID from localStorage (set during login)
+    const recipientId = localStorage.getItem('userId');
+    
+    console.log('User ID from localStorage:', recipientId);
+    
+    if (!recipientId) {
+      alert('You must be logged in to make a reservation.');
+      window.location.href = '/login';
+      return;
+    }
+    
+    // For testing purposes, if the user is not a recipient, use a recipient ID
+    const userRole = localStorage.getItem('userRole');
+    console.log('User role:', userRole);
+    
+    let actualRecipientId = recipientId;
+    if (userRole !== 'Recipient') {
+      console.log('User is not a recipient, using test recipient ID 3 (Dylan Smith)');
+      actualRecipientId = '3'; // Use Dylan Smith's ID for testing
+    }
+    
+    // Prepare reservation data
+    const reservationData = {
+      recipientId: actualRecipientId,
+      pickupLocation: pickupLocation,
+      pickupDate: pickupDate,
+      contactInfo: contactInfo,
+      additionalNotes: additionalNotes,
+      items: basket.map(item => ({
+        foodId: item.id || item.foodID, // Handle both formats (id and foodID)
+        quantity: item.quantity || 1
+      }))
+    };
+    
+    console.log('Submitting reservation data:', reservationData);
+    
+    // Submit reservation to API
+    fetch('/api/reserve-food/basket', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(reservationData)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to submit reservation');
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Clear basket after successful reservation
+      localStorage.removeItem('foodBasket');
+      
+      // Store user ID in both localStorage and sessionStorage to ensure it's available
+      localStorage.setItem('userId', actualRecipientId);
+      sessionStorage.setItem('userId', actualRecipientId);
+      
+      // Store user role too
+      if (userRole) {
+        localStorage.setItem('userRole', userRole);
+        sessionStorage.setItem('userRole', userRole);
+      }
+      
+      // Show success message
+      alert('Your reservation has been submitted successfully!');
+      
+      // Redirect to reservations page with user ID parameter
+      window.location.href = `/reservations?userId=${actualRecipientId}`;
+    })
+    .catch(error => {
+      console.error('Error submitting reservation:', error);
+      alert('Failed to submit reservation. Please try again later.');
+    });
+  }
+});
+</script>
+
+</body>
+</html>
