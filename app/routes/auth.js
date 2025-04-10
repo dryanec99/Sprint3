@@ -2,6 +2,9 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../services/db');
+// At the top of the file, require bcrypt:
+const bcrypt = require('bcryptjs');
+const saltRounds = 10;  // You can adjust the number of rounds for salt generation
 
 // Debug route to check table structure
 router.get('/debug/table-structure', async (req, res) => {
@@ -27,20 +30,27 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ error: 'Email and password are required' });
         }
         
+        // Query the database by email only
         const query = `
-            SELECT userID, name, email, role 
+            SELECT userID, name, email, password, role 
             FROM users 
-            WHERE email = ? AND password = ?
+            WHERE email = ?
         `;
-        
-        const results = await db.query(query, [email, password]);
+        const results = await db.query(query, [email]);
         
         if (results.length === 0) {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
         
-        // Return user data (excluding password)
         const user = results[0];
+        
+        // Compare the provided password with the stored hashed password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
+        
+        // Return user data (excluding the password)
         res.json({ 
             success: true, 
             message: 'Login successful',
@@ -57,19 +67,19 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Register route
+
+// Inside your register route:
 router.post('/register', async (req, res) => {
     console.log('==== REGISTER ROUTE CALLED ====');
     console.log('Request body:', req.body);
     
     try {
-        // Check if the request body is empty
         if (!req.body || Object.keys(req.body).length === 0) {
             console.error('Empty request body');
             return res.status(400).json({ error: 'Request body is empty' });
         }
         
-        // Extract the basic user data
+        // Extract user data
         const { name, email, password, role, typeOfUser } = req.body;
         
         console.log('Extracted data:', { 
@@ -80,123 +90,100 @@ router.post('/register', async (req, res) => {
             typeOfUser: typeOfUser || 'MISSING'
         });
         
-        // Validate required fields
         if (!name || !email || !password || !role) {
             console.error('Missing required fields');
             return res.status(400).json({ 
                 error: 'Name, email, password, and role are required',
-                missing: {
-                    name: !name,
-                    email: !email,
-                    password: !password,
-                    role: !role
-                }
+                missing: { name: !name, email: !email, password: !password, role: !role }
             });
         }
         
-        // Validate role against the enum values in the database
         const validRoles = ['Donor', 'Recipient', 'Volunteer', 'Admin'];
         if (!validRoles.includes(role)) {
             console.error('Invalid role:', role);
-            return res.status(400).json({ 
-                error: 'Role must be one of: Donor, Recipient, Volunteer, Admin' 
-            });
+            return res.status(400).json({ error: 'Role must be one of: Donor, Recipient, Volunteer, Admin' });
         }
         
         // Check if email already exists
         const checkQuery = 'SELECT userID FROM users WHERE email = ?';
         console.log('Checking if email exists:', email);
         const existingUser = await db.query(checkQuery, [email]);
-        
         if (existingUser.length > 0) {
             console.error('Email already exists');
             return res.status(409).json({ error: 'Email already registered' });
         }
         
+        // Hash the password before storing
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        
         // Use typeOfUser from request or default to role
         const userType = typeOfUser || role;
         console.log('Using typeOfUser:', userType);
         
-        // Insert new user with typeOfUser field
+        // Insert new user using the hashed password
         const insertQuery = `
             INSERT INTO users (name, email, password, role, typeOfUser) 
             VALUES (?, ?, ?, ?, ?)
         `;
-        
         console.log('Executing insert query with values:', [name, email, '***', role, userType]);
         
-        try {
-            const result = await db.query(insertQuery, [name, email, password, role, userType]);
-            console.log('Insert result:', result);
+        const result = await db.query(insertQuery, [name, email, hashedPassword, role, userType]);
+        console.log('Insert result:', result);
+        
+        if (result && result.affectedRows === 1) {
+            console.log('User registered successfully with ID:', result.insertId);
             
-            if (result && result.affectedRows === 1) {
-                console.log('User registered successfully with ID:', result.insertId);
-                
-                // If it's a volunteer, try to store additional information
-                if (role === 'Volunteer' && result.insertId) {
-                    try {
-                        const whyVolunteer = req.body.whyVolunteer || '';
-                        const availability = req.body.availability || '';
-                        const skills = req.body.skills || '';
-                        
-                        // Check if volunteer_details table exists first
-                        const checkTableQuery = `
-                            SELECT COUNT(*) as tableExists 
-                            FROM information_schema.tables 
-                            WHERE table_schema = 'community_fridge' 
-                            AND table_name = 'volunteer_details'
+            // Handle volunteer-specific details if applicable
+            if (role === 'Volunteer' && result.insertId) {
+                try {
+                    const whyVolunteer = req.body.whyVolunteer || '';
+                    const availability = req.body.availability || '';
+                    const skills = req.body.skills || '';
+                    const checkTableQuery = `
+                        SELECT COUNT(*) as tableExists 
+                        FROM information_schema.tables 
+                        WHERE table_schema = 'community_fridge' 
+                        AND table_name = 'volunteer_details'
+                    `;
+                    const tableCheck = await db.query(checkTableQuery);
+                    
+                    if (tableCheck[0].tableExists > 0) {
+                        const volunteerQuery = `
+                            INSERT INTO volunteer_details (volunteerID, whyVolunteer, availability, skills)
+                            VALUES (?, ?, ?, ?)
                         `;
-                        
-                        const tableCheck = await db.query(checkTableQuery);
-                        
-                        if (tableCheck[0].tableExists > 0) {
-                            const volunteerQuery = `
-                                INSERT INTO volunteer_details (volunteerID, whyVolunteer, availability, skills)
-                                VALUES (?, ?, ?, ?)
-                            `;
-                            
-                            await db.query(volunteerQuery, [result.insertId, whyVolunteer, availability, skills]);
-                            console.log('Volunteer details saved');
-                        } else {
-                            console.log('volunteer_details table does not exist, skipping additional data');
-                        }
-                    } catch (volunteerError) {
-                        console.error('Error saving volunteer details:', volunteerError);
-                        // Continue with registration even if volunteer details fail
+                        await db.query(volunteerQuery, [result.insertId, whyVolunteer, availability, skills]);
+                        console.log('Volunteer details saved');
+                    } else {
+                        console.log('volunteer_details table does not exist, skipping additional data');
                     }
+                } catch (volunteerError) {
+                    console.error('Error saving volunteer details:', volunteerError);
                 }
-                
-                // Get the newly created user
-                const newUserQuery = 'SELECT userID, name, email, role FROM users WHERE userID = ?';
-                const newUser = await db.query(newUserQuery, [result.insertId]);
-                
-                if (newUser.length > 0) {
-                    console.log('Sending success response with user data');
-                    res.status(201).json({ 
-                        success: true, 
-                        message: 'Registration successful',
-                        user: {
-                            id: newUser[0].userID,
-                            name: newUser[0].name,
-                            email: newUser[0].email,
-                            role: newUser[0].role
-                        }
-                    });
-                } else {
-                    console.log('Sending success response with user ID only');
-                    res.status(201).json({ 
-                        success: true, 
-                        message: 'Registration successful',
-                        userId: result.insertId
-                    });
-                }
-            } else {
-                console.error('Failed to register user - no affected rows');
-                throw new Error('Failed to register user - no affected rows');
             }
-        } catch (dbError) {
-            console.error('Database error during insert:', dbError);
-            throw dbError;
+            
+            // Return the newly created user (without password)
+            const newUserQuery = 'SELECT userID, name, email, role FROM users WHERE userID = ?';
+            const newUser = await db.query(newUserQuery, [result.insertId]);
+            if (newUser.length > 0) {
+                console.log('Sending success response with user data');
+                res.status(201).json({ 
+                    success: true, 
+                    message: 'Registration successful',
+                    user: {
+                        id: newUser[0].userID,
+                        name: newUser[0].name,
+                        email: newUser[0].email,
+                        role: newUser[0].role
+                    }
+                });
+            } else {
+                console.log('Sending success response with user ID only');
+                res.status(201).json({ success: true, message: 'Registration successful', userId: result.insertId });
+            }
+        } else {
+            console.error('Failed to register user - no affected rows');
+            throw new Error('Failed to register user - no affected rows');
         }
     } catch (error) {
         console.error('Registration error:', error);
