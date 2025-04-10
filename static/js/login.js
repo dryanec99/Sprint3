@@ -80,6 +80,11 @@ function setupLoginForm() {
         // Store logged in user in session storage
         sessionStorage.setItem('currentUser', JSON.stringify(user));
         
+        // Also store in localStorage for messaging system
+        localStorage.setItem('userId', user.id);
+        localStorage.setItem('userName', user.name || username);
+        localStorage.setItem('userRole', user.type);
+        
         // Redirect based on user type
         switch (user.type) {
           case 'donor':

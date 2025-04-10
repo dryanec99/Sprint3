@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
   setupNavigationHighlight();
   displayNotificationCount();
   makeLogoClickable();
+  checkUnreadMessages();
 });
 
 // Make the Community Fridge logo/title clickable on all pages
@@ -18,6 +19,15 @@ function makeLogoClickable() {
       headerTitle.innerHTML = `<a href="/" style="color: white; text-decoration: none;">${titleText}</a>`;
       console.log('Made Community Fridge logo clickable');
     }
+  }
+  
+  // Make the logo clickable
+  const logo = document.querySelector('header h1 a');
+  if (logo) {
+    logo.addEventListener('click', function(e) {
+      e.preventDefault();
+      window.location.href = '/';
+    });
   }
 }
 
@@ -187,6 +197,44 @@ function getUserNotifications() {
   });
 }
 
+// Function to check for unread messages
+function checkUnreadMessages() {
+  // Get the current user ID from localStorage (set during login)
+  const userId = localStorage.getItem('userId');
+  
+  // If no user ID is found, the user is not logged in
+  if (!userId) {
+    return;
+  }
+  
+  // Fetch unread messages count
+  fetch(`/api/messages/inbox/${userId}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch messages');
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Count unread messages
+      const unreadCount = data.filter(message => !message.isRead).length;
+      
+      // Update the unread count badge on all pages
+      const unreadCountElements = document.querySelectorAll('#unread-count');
+      unreadCountElements.forEach(element => {
+        if (unreadCount > 0) {
+          element.textContent = unreadCount;
+          element.style.display = 'inline';
+        } else {
+          element.style.display = 'none';
+        }
+      });
+    })
+    .catch(error => {
+      console.error('Error checking unread messages:', error);
+    });
+}
+
 // Logout function
 function logout() {
   // Clear session storage
@@ -194,4 +242,4 @@ function logout() {
   
   // Redirect to login page
   window.location.href = 'login.html';
-} 
+}

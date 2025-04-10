@@ -19,6 +19,7 @@ const donationsRoutes = require('./routes/donations');
 const testDonationRoutes = require('./routes/test-donation');
 const foodRoutes = require('./routes/food'); 
 const directDonationRoutes = require('./routes/direct-donation'); 
+const messagesRoutes = require('./routes/messages'); 
 
 // Create express app
 var app = express();
@@ -44,6 +45,7 @@ app.use('/api/donations', donationsRoutes);
 app.use('/api/test-donation', testDonationRoutes);
 app.use('/api/food', foodRoutes); 
 app.use('/api/direct-donation', directDonationRoutes); 
+app.use('/api/messages', messagesRoutes); 
 
 // Create a route for root - /
 app.get("/", function(req, res) {
@@ -112,6 +114,9 @@ app.get("/contact", function(req, res) {
 });
 app.get("/about", function(req, res) {
     res.sendFile(path.join(__dirname, "..", "frontend", "about.html"));
+});
+app.get("/messages", function(req, res) {
+    res.sendFile(path.join(__dirname, "..", "frontend", "messages.html"));
 });
 
 // Start server on port 3000
