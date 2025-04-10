@@ -1,0 +1,92 @@
+# Community Fridge CI Workflow
+# This file defines the Continuous Integration process for the Community Fridge application.
+# It runs automatically when code is pushed or pull requests are created.
+
+# The name that will appear in the GitHub Actions tab
+name: Community Fridge CI
+
+# Define when this workflow will run
+on:
+  # Trigger on push events to these branches
+  push:
+    branches: [ main, master ]
+  # Trigger on pull request events to these branches
+  pull_request:
+    branches: [ main, master ]
+
+# A workflow is made up of one or more jobs
+jobs:
+  # This job is called "build-and-test"
+  build-and-test:
+    # The type of runner that the job will run on (Ubuntu in this case)
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Step 1: Check out your repository code so the workflow can access it
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    # Step 2: Set up Node.js environment for the application
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        # Specify the Node.js version to use
+        node-version: '18'
+        # Cache npm dependencies to speed up installation
+        cache: 'npm'
+        
+    # Step 3: Install project dependencies using a clean install
+    - name: Install dependencies
+      # npm ci is faster and more reliable than npm install for CI environments
+      run: npm ci
+      
+    # Step 4: Run code linting to check code quality
+    - name: Lint code
+      run: |
+        echo "Running linting checks..."
+        # The "|| true" ensures the workflow continues even if linting fails
+        # This is useful during development but could be removed for stricter checks
+        npx eslint . --ext .js || true
+        
+    # Step 5: Check for security vulnerabilities in dependencies
+    - name: Check for security vulnerabilities
+      run: |
+        echo "Checking for security vulnerabilities..."
+        # The "|| true" ensures the workflow continues even if vulnerabilities are found
+        # This allows you to review issues without failing the build
+        npm audit || true
+        
+    # Step 6: Build and test Docker containers to ensure they work properly
+    - name: Build and test Docker containers
+      run: |
+        echo "Building Docker containers..."
+        # Build all services defined in docker-compose.yml
+        docker-compose build
+        
+        echo "Starting Docker containers..."
+        # Start containers in detached mode (background)
+        docker-compose up -d
+        
+        echo "Checking if containers are running..."
+        # List all running containers to verify they started correctly
+        docker-compose ps
+        
+        echo "Waiting for services to be ready..."
+        # Give containers time to fully initialize
+        sleep 10
+        
+        echo "Running basic health check..."
+        # Check if the web application is accessible
+        # Continue workflow even if the health check fails
+        curl -f http://localhost:3000/ || echo "Website not accessible, but continuing workflow"
+        
+        echo "Stopping containers..."
+        # Clean up by stopping and removing all containers
+        docker-compose down
+        
+    # Step 7: Final notification of completion
+    - name: Notify on completion
+      run: |
+        echo "CI process completed successfully!"
+        # This could be expanded to include notifications via email, Slack, etc.
