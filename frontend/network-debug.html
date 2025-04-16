@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network Debug</title>
+  <style>
+    body {
+      font-family: monospace;
+      margin: 20px;
+      line-height: 1.6;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    .log-container {
+      background-color: #f5f5f5;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+    .log-entry {
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+    }
+    .timestamp {
+      color: #888;
+      font-size: 0.9em;
+    }
+    .info {
+      color: #0066cc;
+    }
+    .success {
+      color: #008800;
+    }
+    .error {
+      color: #cc0000;
+    }
+    .warning {
+      color: #cc6600;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 20px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      background-color: #f9f9f9;
+      padding: 10px;
+      border-radius: 3px;
+      border: 1px solid #ddd;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Network Debug Tool</h1>
+  
+  <div>
+    <button id="xhr-button">Test with XMLHttpRequest</button>
+    <button id="fetch-button">Test with Fetch API</button>
+    <button id="jquery-button">Test with jQuery</button>
+    <button id="clear-button">Clear Logs</button>
+  </div>
+  
+  <div class="log-container" id="log-container">
+    <div class="log-entry info">
+      <span class="timestamp">[${new Date().toISOString()}]</span>
+      Network debug tool loaded. Click a button to test the API.
+    </div>
+  </div>
+  
+  <h2>Response Data:</h2>
+  <pre id="response-data">No data yet. Click a button to fetch data.</pre>
+  
+  <!-- Include jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <script>
+    // Log function
+    function log(message, type = 'info') {
+      const logContainer = document.getElementById('log-container');
+      const logEntry = document.createElement('div');
+      logEntry.className = `log-entry ${type}`;
+      logEntry.innerHTML = `<span class="timestamp">[${new Date().toISOString()}]</span> ${message}`;
+      logContainer.appendChild(logEntry);
+      logContainer.scrollTop = logContainer.scrollHeight;
+    }
+    
+    // Display response data
+    function displayResponseData(data) {
+      const responseData = document.getElementById('response-data');
+      if (typeof data === 'object') {
+        responseData.textContent = JSON.stringify(data, null, 2);
+      } else {
+        responseData.textContent = data;
+      }
+    }
+    
+    // Test with XMLHttpRequest
+    document.getElementById('xhr-button').addEventListener('click', function() {
+      log('Testing API with XMLHttpRequest...', 'info');
+      
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api/manage-reservations/all', true);
+      
+      xhr.onreadystatechange = function() {
+        log(`XHR readyState changed: ${xhr.readyState}`, 'info');
+        
+        if (xhr.readyState === 2) {
+          log(`XHR headers received. Status: ${xhr.status} ${xhr.statusText}`, 'info');
+        }
+        
+        if (xhr.readyState === 4) {
+          log(`XHR request completed. Status: ${xhr.status} ${xhr.statusText}`, xhr.status === 200 ? 'success' : 'error');
+          
+          if (xhr.status === 200) {
+            log(`XHR response received. Length: ${xhr.responseText.length} bytes`, 'success');
+            
+            try {
+              const data = JSON.parse(xhr.responseText);
+              log(`XHR JSON parsed successfully. Found ${data.length} items.`, 'success');
+              displayResponseData(data);
+            } catch (error) {
+              log(`XHR JSON parse error: ${error.message}`, 'error');
+              displayResponseData(xhr.responseText.substring(0, 1000) + '...');
+            }
+          } else {
+            log(`XHR error response: ${xhr.statusText}`, 'error');
+            displayResponseData(xhr.responseText || 'No response text');
+          }
+        }
+      };
+      
+      xhr.onerror = function(error) {
+        log(`XHR network error: ${error}`, 'error');
+      };
+      
+      xhr.setRequestHeader('Accept', 'application/json');
+      log('XHR request sent', 'info');
+      xhr.send();
+    });
+    
+    // Test with Fetch API
+    document.getElementById('fetch-button').addEventListener('click', function() {
+      log('Testing API with Fetch API...', 'info');
+      
+      fetch('/api/manage-reservations/all', {
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+      .then(response => {
+        log(`Fetch response received. Status: ${response.status} ${response.statusText}`, response.ok ? 'success' : 'error');
+        
+        // Log response headers
+        const headers = {};
+        response.headers.forEach((value, name) => {
+          headers[name] = value;
+        });
+        log(`Fetch response headers: ${JSON.stringify(headers)}`, 'info');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        return response.text();
+      })
+      .then(text => {
+        log(`Fetch response text received. Length: ${text.length} bytes`, 'success');
+        
+        try {
+          const data = JSON.parse(text);
+          log(`Fetch JSON parsed successfully. Found ${data.length} items.`, 'success');
+          displayResponseData(data);
+        } catch (error) {
+          log(`Fetch JSON parse error: ${error.message}`, 'error');
+          displayResponseData(text.substring(0, 1000) + '...');
+        }
+      })
+      .catch(error => {
+        log(`Fetch error: ${error.message}`, 'error');
+      });
+    });
+    
+    // Test with jQuery
+    document.getElementById('jquery-button').addEventListener('click', function() {
+      log('Testing API with jQuery AJAX...', 'info');
+      
+      $.ajax({
+        url: '/api/manage-reservations/all',
+        method: 'GET',
+        dataType: 'json',
+        beforeSend: function(xhr) {
+          log('jQuery AJAX request being sent', 'info');
+        },
+        success: function(data, textStatus, jqXHR) {
+          log(`jQuery AJAX success: ${textStatus}. Status: ${jqXHR.status}`, 'success');
+          
+          if (Array.isArray(data)) {
+            log(`jQuery AJAX data received. Found ${data.length} items.`, 'success');
+          } else {
+            log(`jQuery AJAX data received. Type: ${typeof data}`, 'success');
+          }
+          
+          displayResponseData(data);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          log(`jQuery AJAX error: ${textStatus} - ${errorThrown}. Status: ${jqXHR.status}`, 'error');
+          displayResponseData(jqXHR.responseText || 'No response text');
+        },
+        complete: function(jqXHR, textStatus) {
+          log(`jQuery AJAX request complete: ${textStatus}`, 'info');
+        }
+      });
+    });
+    
+    // Clear logs
+    document.getElementById('clear-button').addEventListener('click', function() {
+      document.getElementById('log-container').innerHTML = '';
+      document.getElementById('response-data').textContent = 'Logs cleared.';
+      log('Logs cleared', 'info');
+    });
+  </script>
+</body>
+</html>

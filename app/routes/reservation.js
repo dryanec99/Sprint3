@@ -3,6 +3,56 @@ const express = require('express');
 const router = express.Router();
 const db = require('../services/db');
 
+// Get all reservations (for volunteers)
+router.get('/all', async (req, res) => {
+    try {
+        console.log('Fetching all reservations for volunteer dashboard');
+        
+        // Simple query to get all reservations
+        const simpleQuery = 'SELECT * FROM reservations';
+        const simpleResults = await db.query(simpleQuery);
+        console.log(`Found ${simpleResults.length} basic reservations`);
+        
+        // Detailed query with joins
+        const query = `
+            SELECT 
+                r.reservationID as id, 
+                r.recipientID, 
+                r.foodID, 
+                r.status, 
+                r.pickupDate, 
+                r.created_at as reservationDate, 
+                u.name as recipientName,
+                f.name as foodName, 
+                f.quantity, 
+                fr.location
+            FROM 
+                reservations r
+            LEFT JOIN 
+                food_items f ON r.foodID = f.foodID
+            LEFT JOIN 
+                fridges fr ON f.fridgeID = fr.fridgeID
+            LEFT JOIN 
+                users u ON r.recipientID = u.userID
+            ORDER BY 
+                r.created_at DESC
+        `;
+        
+        try {
+            const results = await db.query(query);
+            console.log(`Found ${results.length} detailed reservations`);
+            res.json(results);
+        } catch (error) {
+            console.error('Error with detailed query:', error);
+            // If the detailed query fails, return the simple results
+            res.json(simpleResults);
+        }
+    } catch (error) {
+        console.error('Error fetching all reservations:', error);
+        res.status(500).json({ error: 'Failed to fetch reservations', details: error.message });
+    }
+});
+
 // Get all reservations for a user
 router.get('/my-reservations', async (req, res) => {
     try {
@@ -50,7 +100,7 @@ router.post('/create', async (req, res) => {
     }
 });
 
-// Cancel a reservation
+// Cancel a reservation (for recipients)
 router.delete('/cancel/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -75,6 +125,67 @@ router.delete('/cancel/:id', async (req, res) => {
         res.json({ message: 'Reservation cancelled successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+});
+
+// Approve a reservation (for volunteers)
+router.put('/:id/approve', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        console.log(`Approving reservation ${id}`);
+        
+        // Check if reservation exists
+        const checkQuery = 'SELECT * FROM reservations WHERE reservationID = ?';
+        const reservations = await db.query(checkQuery, [id]);
+        
+        if (reservations.length === 0) {
+            return res.status(404).json({ error: 'Reservation not found' });
+        }
+        
+        // Update reservation status
+        const updateQuery = 'UPDATE reservations SET status = ? WHERE reservationID = ?';
+        await db.query(updateQuery, ['Confirmed', id]);
+        
+        res.json({ message: 'Reservation approved successfully' });
+    } catch (error) {
+        console.error('Error approving reservation:', error);
+        res.status(500).json({ error: 'Failed to approve reservation', details: error.message });
+    }
+});
+
+// Cancel a reservation (for volunteers)
+router.put('/:id/cancel', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        console.log(`Cancelling reservation ${id}`);
+        
+        // Check if reservation exists
+        const checkQuery = 'SELECT * FROM reservations WHERE reservationID = ?';
+        const reservations = await db.query(checkQuery, [id]);
+        
+        if (reservations.length === 0) {
+            return res.status(404).json({ error: 'Reservation not found' });
+        }
+        
+        // Get reservation details to update inventory if needed
+        const reservation = reservations[0];
+        
+        // Update food item status if needed
+        if (reservation.foodID) {
+            const updateFoodQuery = 'UPDATE food_items SET status = ? WHERE foodID = ?';
+            await db.query(updateFoodQuery, ['Available', reservation.foodID]);
+        }
+        
+        // Delete the reservation
+        const deleteQuery = 'DELETE FROM reservations WHERE reservationID = ?';
+        await db.query(deleteQuery, [id]);
+        
+        res.json({ message: 'Reservation cancelled successfully' });
+    } catch (error) {
+        console.error('Error cancelling reservation:', error);
+        res.status(500).json({ error: 'Failed to cancel reservation', details: error.message });
     }
 });
 

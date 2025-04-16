@@ -199,29 +199,25 @@
         resultMessage.scrollIntoView({ behavior: 'smooth' });
       }
       
-      // Try to get user data from localStorage
+      // Try to get user data from localStorage using the individual items
       try {
-        const userDataString = localStorage.getItem('userData');
-        console.log('Raw user data from localStorage:', userDataString);
+        const userId = localStorage.getItem('userId');
+        const userName = localStorage.getItem('userName');
+        const userRole = localStorage.getItem('userRole');
+        const userEmail = localStorage.getItem('userEmail') || 'Not available';
         
-        if (userDataString) {
-          const userData = JSON.parse(userDataString);
-          console.log('Parsed user data:', userData);
-          
-          if (userData && userData.id) {
-            userInfoDisplay.innerHTML = `
-              <p><strong>Name:</strong> ${userData.name || 'Not available'}</p>
-              <p><strong>Email:</strong> ${userData.email || 'Not available'}</p>
-              <p><strong>Role:</strong> ${userData.role || 'Not available'}</p>
-              <p><strong>ID:</strong> ${userData.id}</p>
-            `;
-            donorIdInput.value = userData.id;
-          } else {
-            userInfoDisplay.innerHTML = '<p style="color: red;">User ID not found. Please log in again.</p>';
-            showMessage('Please log in as a donor to submit donations.', 'error');
-          }
+        console.log('User data from localStorage:', { userId, userName, userRole });
+        
+        if (userId && userName) {
+          userInfoDisplay.innerHTML = `
+            <p><strong>Name:</strong> ${userName}</p>
+            <p><strong>Email:</strong> ${userEmail}</p>
+            <p><strong>Role:</strong> ${userRole || 'Donor'}</p>
+            <p><strong>ID:</strong> ${userId}</p>
+          `;
+          donorIdInput.value = userId;
         } else {
-          userInfoDisplay.innerHTML = '<p style="color: red;">No user data found. Please log in.</p>';
+          userInfoDisplay.innerHTML = '<p style="color: red;">User ID not found. Please log in again.</p>';
           showMessage('Please log in as a donor to submit donations.', 'error');
         }
       } catch (error) {

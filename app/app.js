@@ -22,6 +22,12 @@ const directDonationRoutes = require('./routes/direct-donation');
 const messagesRoutes = require('./routes/messages'); 
 const fridgesRoutes = require('./routes/fridges'); 
 const recipientReservationsRoutes = require('./routes/recipient-reservations'); 
+const serverRenderedRoutes = require('./routes/server-rendered'); 
+const pointsRoutes = require('./routes/points'); 
+const recipientPointsRoutes = require('./routes/recipient-points'); 
+const autoAchievementsRoutes = require('./routes/auto-achievements'); 
+const feedbackRoutes = require('./routes/feedback'); 
+const volunteerStatsRoutes = require('./routes/volunteer-stats');
 
 // Create express app
 var app = express();
@@ -49,7 +55,13 @@ app.use('/api/food', foodRoutes);
 app.use('/api/direct-donation', directDonationRoutes); 
 app.use('/api/messages', messagesRoutes); 
 app.use('/api/fridges', fridgesRoutes); 
-app.use('/api/recipient-reservations', recipientReservationsRoutes); 
+app.use('/api/recipient-reservations', recipientReservationsRoutes);
+app.use('/api/points', pointsRoutes);
+app.use('/api/recipient-points', recipientPointsRoutes);
+app.use('/api/volunteer-stats', volunteerStatsRoutes);
+app.use('/api/auto-achievements', autoAchievementsRoutes);
+app.use('/api/feedback', feedbackRoutes);
+app.use('/server', serverRenderedRoutes); 
 
 // Create a route for root - /
 app.get("/", function(req, res) {
@@ -119,6 +131,10 @@ app.get("/volunteer-reservations", function(req, res) {
     res.sendFile(path.join(__dirname, "..", "frontend", "volunteer-reservations.html"));
 });
 
+app.get("/volunteer-reservations-direct", function(req, res) {
+    res.sendFile(path.join(__dirname, "..", "frontend", "volunteer-reservations-direct.html"));
+});
+
 app.get("/test-reservations", function(req, res) {
     res.sendFile(path.join(__dirname, "..", "frontend", "test-reservations.html"));
 });
@@ -130,6 +146,43 @@ app.get("/volunteer-reservations-simple", function(req, res) {
 app.get("/debug-reservations", function(req, res) {
     res.sendFile(path.join(__dirname, "..", "frontend", "debug-reservations.html"));
 });
+
+app.get("/basic-reservations", function(req, res) {
+    res.sendFile(path.join(__dirname, "..", "frontend", "basic-reservations.html"));
+});
+
+app.get("/network-debug", function(req, res) {
+    res.sendFile(path.join(__dirname, "..", "frontend", "network-debug.html"));
+});
+
+app.get("/debug-api", function(req, res) {
+    res.sendFile(path.join(__dirname, "..", "frontend", "debug-api.html"));
+});
+
+app.get("/test-reservations-display", function(req, res) {
+    res.sendFile(path.join(__dirname, "..", "frontend", "test-reservations-display.html"));
+});
+
+app.get("/simple-reservations", function(req, res) {
+    res.sendFile(path.join(__dirname, "..", "frontend", "simple-reservations.html"));
+});
+
+app.get("/find-fridge", function(req, res) {
+    res.sendFile(path.join(__dirname, "..", "frontend", "find-fridge.html"));
+});
+
+app.get("/recipient-points", function(req, res) {
+    res.sendFile(path.join(__dirname, "..", "frontend", "recipient-points.html"));
+});
+
+app.get("/volunteer-points", function(req, res) {
+    res.sendFile(path.join(__dirname, "..", "frontend", "volunteer-points.html"));
+});
+
+app.get("/feedback", function(req, res) {
+    res.sendFile(path.join(__dirname, "..", "frontend", "feedback.html"));
+});
+
 app.get("/sendnotifications", function(req, res) {
     res.sendFile(path.join(__dirname, "..", "frontend", "sendnotifications.html"));
 });

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Reservations Display</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      color: #2e8b57;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #2e8b57;
+      color: white;
+    }
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      font-style: italic;
+      color: #666;
+    }
+    .error {
+      color: red;
+      padding: 10px;
+      background-color: #ffeeee;
+      border-left: 4px solid red;
+      margin: 10px 0;
+    }
+    .status-pending {
+      background-color: #e3f2fd;
+      color: #1976d2;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.8em;
+    }
+    .status-approved, .status-confirmed {
+      background-color: #e8f5e9;
+      color: #388e3c;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.8em;
+    }
+    .status-cancelled, .status-canceled {
+      background-color: #ffebee;
+      color: #d32f2f;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.8em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Test Reservations Display</h1>
+  <p>This page directly fetches and displays reservations from the database.</p>
+  
+  <div id="error-container"></div>
+  
+  <div id="loading" class="loading">Loading reservations...</div>
+  
+  <table id="reservations-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Reservation Date</th>
+        <th>Recipient</th>
+        <th>Food Item</th>
+        <th>Pickup Date</th>
+        <th>Location</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="reservations-body">
+      <!-- Reservations will be inserted here -->
+    </tbody>
+  </table>
+
+  <script>
+    // Fetch and display reservations
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchReservations();
+    });
+
+    function fetchReservations() {
+      const loadingElement = document.getElementById('loading');
+      const errorContainer = document.getElementById('error-container');
+      const tableBody = document.getElementById('reservations-body');
+      
+      // Show loading
+      loadingElement.style.display = 'block';
+      errorContainer.innerHTML = '';
+      
+      // Fetch reservations from API
+      fetch('/api/reservation/all')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Fetched reservations:', data);
+          
+          // Hide loading
+          loadingElement.style.display = 'none';
+          
+          if (!data || data.length === 0) {
+            errorContainer.innerHTML = '<div class="error">No reservations found in the database.</div>';
+            return;
+          }
+          
+          // Display reservations
+          displayReservations(data);
+        })
+        .catch(error => {
+          console.error('Error fetching reservations:', error);
+          loadingElement.style.display = 'none';
+          errorContainer.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+        });
+    }
+
+    function displayReservations(reservations) {
+      const tableBody = document.getElementById('reservations-body');
+      tableBody.innerHTML = '';
+      
+      reservations.forEach(reservation => {
+        // Format dates
+        const reservationDate = reservation.reservationDate || reservation.created_at;
+        const formattedReservationDate = reservationDate ? new Date(reservationDate).toLocaleDateString() : 'N/A';
+        const formattedPickupDate = reservation.pickupDate ? new Date(reservation.pickupDate).toLocaleDateString() : 'N/A';
+        
+        // Map status values
+        let status = (reservation.status || 'Pending').toString();
+        const statusClass = `status-${status.toLowerCase()}`;
+        
+        // Create row
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${reservation.id || reservation.reservationID}</td>
+          <td>${formattedReservationDate}</td>
+          <td>${reservation.recipientName || `Recipient #${reservation.recipientID}`}</td>
+          <td>${reservation.foodName || `Food #${reservation.foodID}`}</td>
+          <td>${formattedPickupDate}</td>
+          <td>${reservation.location || 'Community Fridge'}</td>
+          <td><span class="${statusClass}">${status}</span></td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>

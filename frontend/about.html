@@ -4,30 +4,60 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About Us - Community Fridge</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     /* Global Styles */
-    body {
-      font-family: Arial, sans-serif;
+    :root {
+      --primary-color: #2e8b57;
+      --secondary-color: #3cb371;
+      --accent-color: #f8b500;
+      --text-color: #333;
+      --light-gray: #f9f9f9;
+      --medium-gray: #e0e0e0;
+      --dark-gray: #666;
+    }
+    
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      background-color: #f9f9f9;
-      color: #333;
     }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--light-gray);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
     header {
-      background-color: #2e8b57;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
       color: white;
       padding: 20px 0;
       text-align: center;
       position: relative;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+    
     header h1 {
       margin: 0;
       font-size: 2.5em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
+    
+    header h1 i {
+      margin-right: 15px;
+    }
+    
     nav {
       margin-top: 15px;
       text-align: center;
     }
+    
     nav a {
       color: white;
       margin: 0 15px;
@@ -35,71 +65,440 @@
       font-size: 1.1em;
       padding: 8px 16px;
       border-radius: 4px;
-      transition: background-color 0.3s ease;
+      transition: all 0.3s ease;
     }
+    
     nav a:hover {
       background-color: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
     }
+    
+    nav a.active {
+      background-color: rgba(255,255,255,0.3);
+      font-weight: bold;
+    }
+    
     header .back-btn {
       position: absolute;
       left: 20px;
       top: 20px;
-      background: linear-gradient(90deg, #2e8b57 0%, #3cb371 100%);
+      background: rgba(255,255,255,0.2);
       color: white;
       padding: 12px 20px;
       border: none;
       border-radius: 30px;
       cursor: pointer;
       font-size: 1em;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
     }
+    
     header .back-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+      background: rgba(255,255,255,0.3);
+      transform: translateX(-5px);
     }
+    
     main {
-      padding: 40px 20px;
-      max-width: 800px;
+      padding: 0;
+      margin-bottom: 80px; /* Space for footer */
+    }
+    
+
+    
+    /* Content Sections */
+    .content-section {
+      padding: 80px 20px;
+      max-width: 1200px;
       margin: 0 auto;
     }
-    .about-section {
+    
+    .content-section:nth-child(even) {
+      background-color: white;
+    }
+    
+    .section-header {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 50px;
     }
-    .about-section h2 {
-      font-size: 2em;
+    
+    .section-header h2 {
+      font-size: 2.5em;
+      color: var(--primary-color);
       margin-bottom: 20px;
+      position: relative;
+      display: inline-block;
     }
-    .about-section p {
+    
+    .section-header h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background-color: var(--accent-color);
+      border-radius: 2px;
+    }
+    
+    .section-header p {
       font-size: 1.2em;
-      line-height: 1.6;
-      margin-bottom: 20px;
+      color: var(--dark-gray);
+      max-width: 700px;
+      margin: 0 auto;
     }
+    
+    /* Mission & Vision */
+    .mission-vision {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+      margin-top: 40px;
+    }
+    
+    .mission, .vision {
+      flex: 1;
+      min-width: 300px;
+      background-color: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .mission:hover, .vision:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    
+    .mission h3, .vision h3 {
+      font-size: 1.8em;
+      margin-bottom: 20px;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .mission p, .vision p {
+      font-size: 1.1em;
+      line-height: 1.7;
+    }
+    
+    /* Team Section */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+    
+    .team-member {
+      background-color: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease;
+    }
+    
+    .team-member:hover {
+      transform: translateY(-10px);
+    }
+    
+    .member-photo {
+      height: 250px;
+      overflow: hidden;
+    }
+    
+    .member-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    
+    .team-member:hover .member-photo img {
+      transform: scale(1.1);
+    }
+    
+    .member-info {
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .member-info h3 {
+      font-size: 1.4em;
+      margin-bottom: 5px;
+      color: var(--primary-color);
+    }
+    
+    .member-info p.role {
+      color: var(--secondary-color);
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .member-info p.bio {
+      font-size: 0.9em;
+      color: var(--dark-gray);
+    }
+    
+    /* Timeline Section */
+    .timeline {
+      position: relative;
+      max-width: 800px;
+      margin: 40px auto 0;
+    }
+    
+    .timeline::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      background-color: var(--medium-gray);
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -2px;
+    }
+    
+    .timeline-item {
+      padding: 10px 40px;
+      position: relative;
+      width: 50%;
+      box-sizing: border-box;
+    }
+    
+    .timeline-item::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      right: -10px;
+      background-color: white;
+      border: 4px solid var(--primary-color);
+      top: 15px;
+      border-radius: 50%;
+      z-index: 1;
+    }
+    
+    .timeline-item.left {
+      left: 0;
+    }
+    
+    .timeline-item.right {
+      left: 50%;
+    }
+    
+    .timeline-item.right::after {
+      left: -10px;
+    }
+    
+    .timeline-content {
+      padding: 20px;
+      background-color: white;
+      position: relative;
+      border-radius: 6px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .timeline-content h3 {
+      margin-bottom: 10px;
+      color: var(--primary-color);
+    }
+    
+    .timeline-content .date {
+      font-weight: bold;
+      color: var(--accent-color);
+      margin-bottom: 15px;
+      display: block;
+    }
+    
+    /* Footer */
     footer {
-      background-color: #2e8b57;
+      background-color: var(--primary-color);
       color: white;
       text-align: center;
-      padding: 15px;
-      bottom: 0;
+      padding: 20px;
       position: fixed;
+      bottom: 0;
       width: 100%;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .mission-vision {
+        flex-direction: column;
+      }
+      
+      .timeline::after {
+        left: 31px;
+      }
+      
+      .timeline-item {
+        width: 100%;
+        padding-left: 70px;
+        padding-right: 25px;
+      }
+      
+      .timeline-item.right {
+        left: 0;
+      }
+      
+      .timeline-item.left::after, 
+      .timeline-item.right::after {
+        left: 21px;
+      }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1><a href="/" style="color: white; text-decoration: none;">Community Fridge</a></h1>
-    <button class="back-btn" onclick="window.history.back()">&larr; Back</button>
+    <button class="back-btn" onclick="window.history.back()"><i class="fas fa-arrow-left"></i> Back</button>
+    <h1><a href="/" style="color: white; text-decoration: none;"><i class="fas fa-utensils"></i> Community Fridge</a></h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/about" class="active">About Us</a>
+      <a href="/contact">Contact</a>
+    </nav>
   </header>
+  
   <main>
-    <section class="about-section">
-      <h2>About Us</h2>
-      <p>Welcome to Community Fridge! We are a dedicated group of university students who are passionate about making a positive impact in our community. As part of our group project, we have developed this platform to connect donors, food recipients, and volunteers to reduce food waste and support those in need.</p>
-      <p>Our project reflects our commitment to social responsibility, sustainability, and innovation. Through this collaborative effort, we aim to create a transparent, efficient, and supportive system that empowers everyone to contribute to a better community.</p>
-      <p>Thank you for joining us on this journey. Together, we can make a real difference!</p>
+    
+    <!-- About Section -->
+    <section class="content-section">
+      <div class="section-header">
+        <h2>About Us</h2>
+        <p>Welcome to Community Fridge! We are a dedicated group of university students who are passionate about making a positive impact in our community.</p>
+      </div>
+      
+      <p>As part of our group project, we have developed this platform to connect donors, food recipients, and volunteers to reduce food waste and support those in need. Our project reflects our commitment to social responsibility, sustainability, and innovation.</p>
+      
+      <p>Through this collaborative effort, we aim to create a transparent, efficient, and supportive system that empowers everyone to contribute to a better community. Thank you for joining us on this journey. Together, we can make a real difference!</p>
+    </section>
+    
+    <!-- Mission & Vision Section -->
+    <section class="content-section">
+      <div class="section-header">
+        <h2>Our Mission & Vision</h2>
+        <p>What drives us and where we're headed</p>
+      </div>
+      
+      <div class="mission-vision">
+        <div class="mission">
+          <h3><i class="fas fa-bullseye"></i> Our Mission</h3>
+          <p>To reduce food waste and food insecurity in our community by creating an accessible platform that connects food donors with recipients and volunteers.</p>
+          <p>We strive to make food sharing simple, dignified, and efficient while fostering a sense of community responsibility and environmental stewardship.</p>
+        </div>
+        
+        <div class="vision">
+          <h3><i class="fas fa-binoculars"></i> Our Vision</h3>
+          <p>We envision a future where no food goes to waste while people go hungry. A community where sharing resources is normalized and technology serves as a bridge to connect those with excess to those in need.</p>
+          <p>We aim to expand our model to communities worldwide, creating a global network of local food sharing initiatives.</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Team Section -->
+    <section class="content-section">
+      <div class="section-header">
+        <h2>Meet Our Team</h2>
+        <p>The passionate students behind Community Fridge</p>
+      </div>
+      
+      <div class="team-grid">
+        <div class="team-member">
+          <div class="member-photo">
+            <img src="https://randomuser.me/api/portraits/women/43.jpg" alt="Team Member">
+          </div>
+          <div class="member-info">
+            <h3>Stacy Brown</h3>
+            <p class="role">Volunteer Coordinator</p>
+            <p class="bio">Passionate about community service and efficient resource allocation. Manages our volunteer program.</p>
+          </div>
+        </div>
+        
+        <div class="team-member">
+          <div class="member-photo">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Team Member">
+          </div>
+          <div class="member-info">
+            <h3>Ray Johnson</h3>
+            <p class="role">Donor Relations</p>
+            <p class="bio">Works with local businesses and individuals to secure food donations and build partnerships.</p>
+          </div>
+        </div>
+        
+        <div class="team-member">
+          <div class="member-photo">
+            <img src="https://randomuser.me/api/portraits/men/52.jpg" alt="Team Member">
+          </div>
+          <div class="member-info">
+            <h3>Dylan Smith</h3>
+            <p class="role">Recipient Advocate</p>
+            <p class="bio">Ensures our platform remains accessible and dignified for all food recipients.</p>
+          </div>
+        </div>
+        
+        <div class="team-member">
+          <div class="member-photo">
+            <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Team Member">
+          </div>
+          <div class="member-info">
+            <h3>Alice Carter</h3>
+            <p class="role">Technology Lead</p>
+            <p class="bio">Develops and maintains our digital platform to ensure a seamless user experience.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Timeline Section -->
+    <section class="content-section">
+      <div class="section-header">
+        <h2>Our Journey</h2>
+        <p>How Community Fridge has evolved</p>
+      </div>
+      
+      <div class="timeline">
+        <div class="timeline-item left">
+          <div class="timeline-content">
+            <span class="date">January 2025</span>
+            <h3>Project Inception</h3>
+            <p>The idea for Community Fridge was born in a university social entrepreneurship class.</p>
+          </div>
+        </div>
+        
+        <div class="timeline-item right">
+          <div class="timeline-content">
+            <span class="date">February 2025</span>
+            <h3>Research Phase</h3>
+            <p>Our team conducted community surveys and researched existing food sharing models.</p>
+          </div>
+        </div>
+        
+        <div class="timeline-item left">
+          <div class="timeline-content">
+            <span class="date">March 2025</span>
+            <h3>Platform Development</h3>
+            <p>Development of our web application began with a focus on user-friendly design.</p>
+          </div>
+        </div>
+        
+        <div class="timeline-item right">
+          <div class="timeline-content">
+            <span class="date">April 2025</span>
+            <h3>Launch</h3>
+            <p>Community Fridge officially launched, connecting our first donors and recipients.</p>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
+  
   <footer>
     <p>&copy; 2025 Community Fridge. All rights reserved.</p>
   </footer>

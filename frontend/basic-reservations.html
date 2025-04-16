@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Basic Reservations Display</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      color: #2e8b57;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .status-pending {
+      background-color: #fff3cd;
+    }
+    .status-confirmed {
+      background-color: #d4edda;
+    }
+    .status-cancelled {
+      background-color: #f8d7da;
+    }
+    #loading {
+      display: block;
+      text-align: center;
+      padding: 20px;
+    }
+    #error {
+      color: red;
+      font-weight: bold;
+      padding: 20px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>All Reservations</h1>
+  
+  <div id="loading">Loading reservations...</div>
+  <div id="error"></div>
+  
+  <table id="reservations-table" style="display: none;">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Recipient</th>
+        <th>Food Item</th>
+        <th>Quantity</th>
+        <th>Pickup Date</th>
+        <th>Location</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="reservations-body">
+      <!-- Reservations will be displayed here -->
+    </tbody>
+  </table>
+
+  <script>
+    // Wait for DOM to load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Direct API call using XMLHttpRequest
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api/manage-reservations/all', true);
+      
+      xhr.onload = function() {
+        // Hide loading indicator
+        document.getElementById('loading').style.display = 'none';
+        
+        if (xhr.status === 200) {
+          try {
+            // Parse the JSON response
+            const data = JSON.parse(xhr.responseText);
+            console.log('Reservations data:', data);
+            
+            if (data && data.length > 0) {
+              // Show the table
+              document.getElementById('reservations-table').style.display = 'table';
+              
+              // Get the table body
+              const tableBody = document.getElementById('reservations-body');
+              
+              // Add each reservation to the table
+              data.forEach(function(reservation) {
+                // Format the pickup date
+                const pickupDate = reservation.pickupDate ? new Date(reservation.pickupDate).toLocaleDateString() : 'N/A';
+                
+                // Create a new row
+                const row = document.createElement('tr');
+                
+                // Add class based on status
+                if (reservation.status) {
+                  row.classList.add('status-' + reservation.status.toLowerCase());
+                }
+                
+                // Add the reservation data to the row
+                row.innerHTML = `
+                  <td>${reservation.reservationID || 'N/A'}</td>
+                  <td>${reservation.recipientName || 'Unknown'}</td>
+                  <td>${reservation.foodName || 'Unknown'}</td>
+                  <td>${reservation.quantity || '1'}</td>
+                  <td>${pickupDate}</td>
+                  <td>${reservation.location || 'N/A'}</td>
+                  <td>${reservation.status || 'Unknown'}</td>
+                `;
+                
+                // Add the row to the table
+                tableBody.appendChild(row);
+              });
+            } else {
+              // Show error if no reservations
+              document.getElementById('error').style.display = 'block';
+              document.getElementById('error').textContent = 'No reservations found.';
+            }
+          } catch (error) {
+            // Show error if JSON parsing fails
+            console.error('Error parsing JSON:', error);
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error').textContent = 'Error parsing reservations data: ' + error.message;
+          }
+        } else {
+          // Show error if API request fails
+          console.error('API request failed:', xhr.status);
+          document.getElementById('error').style.display = 'block';
+          document.getElementById('error').textContent = 'Failed to fetch reservations: ' + xhr.statusText;
+        }
+      };
+      
+      xhr.onerror = function() {
+        // Hide loading indicator and show error
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('error').textContent = 'Network error occurred while fetching reservations.';
+      };
+      
+      // Send the request
+      xhr.send();
+    });
+  </script>
+</body>
+</html>

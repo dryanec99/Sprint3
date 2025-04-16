@@ -4,103 +4,422 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Donation Guidelines - Community Fridge</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
+    :root {
+      --primary-color: #2e8b57;
+      --secondary-color: #3cb371;
+      --accent-color: #f8b500;
+      --text-color: #333;
+      --light-color: #f9f9f9;
+      --white-color: #ffffff;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
-      color: #333;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text-color);
+      background-color: var(--light-color);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh; /* Full viewport height */
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    /* Header Styles */
+    header {
+      background-color: var(--primary-color);
+      color: var(--white-color);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+    
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      color: var(--white-color);
+      text-decoration: none;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .logo i {
+      margin-right: 10px;
+      font-size: 1.8rem;
+    }
+    
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+    
+    nav ul li {
+      margin-left: 25px;
+    }
+    
+    nav ul li a {
+      color: var(--white-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      padding: 5px 0;
+      position: relative;
+    }
+    
+    nav ul li a:after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      background-color: var(--white-color);
+      bottom: 0;
+      left: 0;
+      transition: var(--transition);
+    }
+    
+    nav ul li a:hover:after,
+    nav ul li a.active:after {
+      width: 100%;
+    }
+    
+    .user-menu {
+      display: flex;
+      align-items: center;
+      color: var(--white-color);
+    }
+    
+    .user-greeting {
+      margin-right: 15px;
+      font-weight: 500;
+    }
+    
+    .back-btn {
+      background-color: transparent;
+      border: 2px solid var(--white-color);
+      color: var(--white-color);
+      padding: 8px 15px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+    }
+    
+    .back-btn i {
+      margin-right: 5px;
+    }
+    
+    .back-btn:hover {
+      background-color: var(--white-color);
+      color: var(--primary-color);
+    }
+    
+    /* Main Content Styles */
+    main {
+      flex: 1; /* Takes up all available space, pushing footer down */
+      padding: 60px 0;
+    }
+    
+    .guidelines-container {
+      background-color: var(--white-color);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 40px;
+      margin-bottom: 40px;
+    }
+    
+    .page-title {
+      font-size: 2.5rem;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .intro-text {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      text-align: center;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      color: #666;
+    }
+    
+    .guidelines-list {
+      list-style: none;
       margin: 0;
       padding: 0;
     }
-    header {
-      background-color: #2e8b57;
-      color: white;
-      padding: 20px 0;
+    
+    .guideline-item {
+      display: flex;
+      margin-bottom: 25px;
+      padding-bottom: 25px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .guideline-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    
+    .guideline-icon {
+      flex: 0 0 60px;
+      height: 60px;
+      background-color: rgba(46, 139, 87, 0.1);
+      color: var(--primary-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 20px;
+    }
+    
+    .guideline-icon i {
+      font-size: 1.8rem;
+    }
+    
+    .guideline-content {
+      flex: 1;
+    }
+    
+    .guideline-title {
+      font-size: 1.3rem;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    
+    .guideline-description {
+      color: #666;
+      font-size: 1.1rem;
+    }
+    
+    .contact-section {
+      background-color: rgba(46, 139, 87, 0.1);
+      padding: 30px;
+      border-radius: 10px;
       text-align: center;
+      margin-top: 40px;
     }
-    header h1 {
-      margin: 0;
-      font-size: 2.5em;
+    
+    .contact-title {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      margin-bottom: 15px;
     }
-    header nav a {
-      color: white;
-      margin: 0 15px;
-      text-decoration: none;
-      font-size: 1.1em;
+    
+    .contact-text {
+      font-size: 1.1rem;
+      margin-bottom: 20px;
     }
-    /* Back Arrow Button */
-    header .back-btn {
-      position: absolute;
-      left: 20px;
-      top: 20px;
-      background: linear-gradient(90deg, #2e8b57 0%, #3cb371 100%);
-      color: white;
-      padding: 12px 20px;
-      border: none;
+    
+    .contact-btn {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: var(--white-color);
+      padding: 12px 25px;
       border-radius: 30px;
-      cursor: pointer;
-      font-size: 1em;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
     }
-    header .back-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    
+    .contact-btn:hover {
+      background-color: var(--secondary-color);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
-    main {
-      padding: 40px 20px;
+    
+    /* Footer Styles */
+    footer {
+      background-color: var(--primary-color);
+      color: var(--white-color);
+      padding: 30px 0;
+      text-align: center;
+      margin-top: auto; /* Pushes footer to bottom */
+    }
+    
+    .footer-content {
       max-width: 800px;
       margin: 0 auto;
     }
-    h2 {
-      font-size: 2em;
+    
+    .footer-content p {
       margin-bottom: 20px;
     }
-    p {
-      font-size: 1.2em;
+    
+    .social-links {
+      display: flex;
+      justify-content: center;
       margin-bottom: 20px;
-      line-height: 1.6;
     }
-    ul {
-      list-style-type: disc;
-      margin-left: 20px;
+    
+    .social-links a {
+      color: var(--white-color);
+      margin: 0 10px;
+      font-size: 1.5rem;
+      transition: var(--transition);
     }
-    ul li {
-      margin-bottom: 10px;
+    
+    .social-links a:hover {
+      color: var(--accent-color);
     }
-    footer {
-      background-color: #2e8b57;
-      color: white;
-      text-align: center;
-      padding: 20px;
-      margin-top: 40px;
+    
+    .copyright {
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
   <header>
-    <button class="back-btn" onclick="window.history.back()">&larr; Back</button>
-    <h1><a href="/" style="color: white; text-decoration: none;">Community Fridge</a></h1>
+    <div class="container header-container">
+      <a href="/" class="logo">
+        <i class="fas fa-carrot"></i>
+        Community Fridge
+      </a>
+      
+      <nav>
+        <ul>
+          <li><a href="donor">Dashboard</a></li>
+          <li><a href="donationform">Donate Food</a></li>
+          <li><a href="donationhistory">Donation History</a></li>
+          <li><a href="donationguidelines" class="active">Guidelines</a></li>
+          <li><a href="messages">Messages</a></li>
+        </ul>
+      </nav>
+      
+      <div class="user-menu">
+        <button class="back-btn" onclick="window.history.back()"><i class="fas fa-arrow-left"></i> Back</button>
+      </div>
+    </div>
   </header>
+
   <main>
-    <h2>Donation Guidelines</h2>
-    <p>Welcome to the Community Fridge Donation Guidelines page. Please follow these recommendations to ensure your food donations are safe, nutritious, and beneficial to our community.</p>
-    <ul>
-      <li><strong>Food Safety:</strong> Ensure all food items are fresh, properly stored, and within their expiration dates.</li>
-      <li><strong>Packaging:</strong> Package food securely to avoid spoilage or contamination during transportation.</li>
-      <li><strong>Perishable vs. Non-Perishable:</strong> Clearly label perishable items, and prioritize non-perishable items when possible.</li>
-      <li><strong>Accepted Items:</strong> Donate fruits, vegetables, dairy products, canned goods, and other nutritious options. Avoid items that are expired or improperly stored.</li>
-      <li><strong>Donor Responsibilities:</strong> Follow local health standards and guidelines, and keep a record of your donations for tracking purposes.</li>
-      <li><strong>Contact Information:</strong> Provide accurate contact details so we can reach out if additional information is required.</li>
-    </ul>
-    <p>If you have any questions regarding these guidelines or need further assistance, please contact our support team.</p>
+    <div class="container">
+      <div class="guidelines-container">
+        <h1 class="page-title">Donation Guidelines</h1>
+        <p class="intro-text">Please follow these recommendations to ensure your food donations are safe, nutritious, and beneficial to our community.</p>
+        
+        <ul class="guidelines-list">
+          <li class="guideline-item">
+            <div class="guideline-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="guideline-content">
+              <h3 class="guideline-title">Food Safety</h3>
+              <p class="guideline-description">Ensure all food items are fresh, properly stored, and within their expiration dates. Food that is spoiled, moldy, or past its prime should not be donated.</p>
+            </div>
+          </li>
+          
+          <li class="guideline-item">
+            <div class="guideline-icon">
+              <i class="fas fa-box"></i>
+            </div>
+            <div class="guideline-content">
+              <h3 class="guideline-title">Packaging</h3>
+              <p class="guideline-description">Package food securely to avoid spoilage or contamination during transportation. Use clean, food-safe containers and ensure they are properly sealed.</p>
+            </div>
+          </li>
+          
+          <li class="guideline-item">
+            <div class="guideline-icon">
+              <i class="fas fa-temperature-low"></i>
+            </div>
+            <div class="guideline-content">
+              <h3 class="guideline-title">Perishable vs. Non-Perishable</h3>
+              <p class="guideline-description">Clearly label perishable items with dates, and prioritize non-perishable items when possible. Perishable items should be refrigerated promptly.</p>
+            </div>
+          </li>
+          
+          <li class="guideline-item">
+            <div class="guideline-icon">
+              <i class="fas fa-apple-alt"></i>
+            </div>
+            <div class="guideline-content">
+              <h3 class="guideline-title">Accepted Items</h3>
+              <p class="guideline-description">Donate fruits, vegetables, dairy products, canned goods, and other nutritious options. Avoid items that are expired, opened, or improperly stored.</p>
+            </div>
+          </li>
+          
+          <li class="guideline-item">
+            <div class="guideline-icon">
+              <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div class="guideline-content">
+              <h3 class="guideline-title">Donor Responsibilities</h3>
+              <p class="guideline-description">Follow local health standards and guidelines, and keep a record of your donations for tracking purposes. This helps us maintain quality and safety.</p>
+            </div>
+          </li>
+          
+          <li class="guideline-item">
+            <div class="guideline-icon">
+              <i class="fas fa-address-card"></i>
+            </div>
+            <div class="guideline-content">
+              <h3 class="guideline-title">Contact Information</h3>
+              <p class="guideline-description">Provide accurate contact details so we can reach out if additional information is required about your donation.</p>
+            </div>
+          </li>
+        </ul>
+        
+        <div class="contact-section">
+          <h3 class="contact-title">Need More Information?</h3>
+          <p class="contact-text">If you have any questions regarding these guidelines or need further assistance, our support team is here to help.</p>
+          <a href="contact" class="contact-btn">Contact Support</a>
+        </div>
+      </div>
+    </div>
   </main>
+
   <footer>
-    <p>&copy; 2025 Community Fridge. All rights reserved.</p>
+    <div class="container">
+      <div class="footer-content">
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+        <p class="copyright">&copy; 2025 Community Fridge. All rights reserved.</p>
+      </div>
+    </div>
   </footer>
 
-  <!-- Include JavaScript files -->
-  <script src="/static/js/common.js"></script>
-  <script src="/static/js/guidelines.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get user data from localStorage
+      const userName = localStorage.getItem('userName');
+      const userRole = localStorage.getItem('userRole');
+      
+      // If user is logged in and we have a greeting element, update it
+      if (userName && document.querySelector('.user-greeting')) {
+        document.querySelector('.user-greeting').innerHTML = `Hello, <span>${userName}</span>`;
+      }
+    });
+  </script>
 </body>
 </html>

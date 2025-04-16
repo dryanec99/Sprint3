@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Points & Achievements - Community Fridge</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #2e8b57;
+      --secondary-color: #3cb371;
+      --accent-color: #f8b500;
+      --text-color: #333;
+      --light-color: #f9f9f9;
+      --white-color: #ffffff;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text-color);
+      background-color: var(--light-color);
+      line-height: 1.6;
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    /* Header Styles */
+    header {
+      background-color: var(--primary-color);
+      color: var(--white-color);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+    
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      color: var(--white-color);
+      text-decoration: none;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .logo i {
+      margin-right: 10px;
+      font-size: 1.8rem;
+    }
+    
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+    
+    nav ul li {
+      margin-left: 25px;
+    }
+    
+    nav ul li a {
+      color: var(--white-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      padding: 5px 0;
+      position: relative;
+    }
+    
+    nav ul li a:after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      background-color: var(--white-color);
+      bottom: 0;
+      left: 0;
+      transition: var(--transition);
+    }
+    
+    nav ul li a:hover:after,
+    nav ul li a.active:after {
+      width: 100%;
+    }
+    
+    .user-menu {
+      display: flex;
+      align-items: center;
+      color: var(--white-color);
+    }
+    
+    .user-greeting {
+      margin-right: 15px;
+      font-weight: 500;
+    }
+    
+    .logout-btn {
+      background-color: transparent;
+      border: 2px solid var(--white-color);
+      color: var(--white-color);
+      padding: 8px 15px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    
+    .logout-btn:hover {
+      background-color: var(--white-color);
+      color: var(--primary-color);
+    }
+    
+    /* Main Content Styles */
+    .main-content {
+      padding: 40px 0;
+    }
+    
+    .page-title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .page-title h1 {
+      font-size: 2.5rem;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+    }
+    
+    .page-title p {
+      font-size: 1.2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    /* Points Overview Styles */
+    .points-overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    
+    .stats-card {
+      background-color: var(--white-color);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 25px;
+      text-align: center;
+      transition: var(--transition);
+    }
+    
+    .stats-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stats-card .icon {
+      font-size: 2.5rem;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+    }
+    
+    .stats-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    
+    .stats-card .value {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+    
+    .stats-card .description {
+      font-size: 1rem;
+      color: #666;
+    }
+    
+    /* Points History Styles */
+    .points-history {
+      background-color: var(--white-color);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 30px;
+      margin-bottom: 40px;
+    }
+    
+    .points-history h2 {
+      font-size: 1.8rem;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--light-color);
+      padding-bottom: 10px;
+    }
+    
+    .transaction-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    /* Achievement Section Styles */
+    .achievements-section {
+      margin-top: 40px;
+    }
+    
+    /* Refresh Button Styles */
+    .refresh-btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 10px;
+      transition: background-color 0.3s;
+    }
+    
+    .refresh-btn:hover {
+      background-color: var(--secondary-color);
+    }
+    
+    .refresh-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    
+    /* Message Styles */
+    .message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 4px;
+      color: white;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      animation: slideIn 0.5s forwards;
+    }
+    
+    .message.success {
+      background-color: #4CAF50;
+    }
+    
+    .message.error {
+      background-color: #F44336;
+    }
+    
+    .message.fade-out {
+      animation: fadeOut 0.5s forwards;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+    
+    /* Achievements Styles */
+    .achievements-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .achievement-item {
+      display: flex;
+      background-color: var(--white-color);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      transition: var(--transition);
+    }
+    
+    .achievement-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .achievement-item.locked {
+      opacity: 0.7;
+    }
+    
+    .achievement-icon {
+      flex: 0 0 60px;
+      height: 60px;
+      background-color: var(--light-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+    }
+    
+    .achievement-item.locked .achievement-icon {
+      background-color: #ddd;
+      color: #999;
+    }
+    
+    .achievement-item:not(.locked) .achievement-icon {
+      background-color: var(--accent-color);
+      color: var(--white-color);
+    }
+    
+    .achievement-icon i {
+      font-size: 1.8rem;
+    }
+    
+    .achievement-info {
+      flex: 1;
+    }
+    
+    .achievement-info h4 {
+      font-size: 1.2rem;
+      margin-bottom: 5px;
+    }
+    
+    .achievement-info p {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    
+    .achievement-date {
+      font-size: 0.8rem;
+      color: #999;
+    }
+    
+    .achievements-tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--light-color);
+    }
+    
+    .tab-button {
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #666;
+      cursor: pointer;
+      position: relative;
+      transition: var(--transition);
+    }
+    
+    .tab-button:after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 3px;
+      background-color: var(--primary-color);
+      bottom: -2px;
+      left: 0;
+      transition: var(--transition);
+    }
+    
+    .tab-button.active {
+      color: var(--primary-color);
+    }
+    
+    .tab-button.active:after {
+      width: 100%;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 0;
+      color: #999;
+    }
+    
+    .empty-state p {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+    
+    .transaction-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid var(--light-color);
+    }
+    
+    .transaction-info {
+      flex: 1;
+    }
+    
+    .transaction-info h4 {
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+    }
+    
+    .transaction-date {
+      font-size: 0.8rem;
+      color: #999;
+    }
+    
+    .transaction-points {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+    
+    .transaction-points.negative {
+      color: #e74c3c;
+    }
+    
+    /* Level Indicator Styles */
+    .level-indicator {
+      margin-top: 10px;
+    }
+    
+    .level-bar {
+      height: 10px;
+      background-color: #eee;
+      border-radius: 5px;
+      margin-top: 5px;
+      overflow: hidden;
+    }
+    
+    .level-progress {
+      height: 100%;
+      background-color: var(--accent-color);
+      border-radius: 5px;
+      width: 0;
+      transition: width 1s ease;
+    }
+    
+    .level-text {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-container">
+      <a href="/" class="logo">
+        <i class="fas fa-seedling"></i>
+        Community Fridge
+      </a>
+      
+      <nav>
+        <ul>
+          <li><a href="volunteer">Dashboard</a></li>
+          <li><a href="manageinventory">Manage Inventory</a></li>
+          <li><a href="simple-reservations">Reservations</a></li>
+          <li><a href="messages">Messages</a></li>
+          <li><a href="volunteer-points" class="active">My Points</a></li>
+        </ul>
+      </nav>
+      
+      <div class="user-menu">
+        <div class="user-greeting">Hello, <span id="user-name">Volunteer</span></div>
+        <button id="logout-btn" class="logout-btn">Logout</button>
+      </div>
+    </div>
+  </header>
+  
+  <main class="main-content">
+    <div class="container">
+      <div class="page-title">
+        <h1>My Points & Achievements</h1>
+        <p>Track your progress and see the impact you're making in our community.</p>
+        <button id="refresh-achievements" class="refresh-btn"><i class="fas fa-sync-alt"></i> Check for New Achievements</button>
+      </div>
+      
+      <div class="points-overview">
+        <div class="stats-card">
+          <div class="icon">
+            <i class="fas fa-star"></i>
+          </div>
+          <h3>Total Points</h3>
+          <div class="value" id="total-points">0</div>
+          <div class="description">Your community contribution</div>
+          <div class="level-indicator">
+            <div class="level-text">
+              <span>Level <span id="current-level">1</span></span>
+              <span><span id="points-to-next">100</span> points to next level</span>
+            </div>
+            <div class="level-bar">
+              <div class="level-progress" id="level-progress"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="stats-card">
+          <div class="icon">
+            <i class="fas fa-clipboard-check"></i>
+          </div>
+          <h3>Inventory Updates</h3>
+          <div class="value" id="inventory-updates">0</div>
+          <div class="description">Items added or updated</div>
+        </div>
+        
+        <div class="stats-card">
+          <div class="icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <h3>Reservations Managed</h3>
+          <div class="value" id="reservations-managed">0</div>
+          <div class="description">Reservations processed</div>
+        </div>
+        
+        <div class="stats-card">
+          <div class="icon">
+            <i class="fas fa-trophy"></i>
+          </div>
+          <h3>Achievements</h3>
+          <div class="value" id="achievements-count">0</div>
+          <div class="description">Badges earned</div>
+        </div>
+      </div>
+      
+      <div class="points-history">
+        <h2>Points History</h2>
+        <div class="transaction-list" id="transaction-list">
+          <!-- Transaction items will be loaded here -->
+          <div class="empty-state">
+            <p>No point transactions yet</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="achievements-section">
+        <h2>Achievements</h2>
+        <div class="achievements-tabs">
+          <button class="tab-button active" data-tab="my-achievements">My Achievements</button>
+          <button class="tab-button" data-tab="available-achievements">Achievements to Unlock</button>
+        </div>
+        
+        <div class="tab-content active" id="my-achievements">
+          <div class="achievements-list" id="earned-achievements">
+            <!-- Earned achievements will be loaded here -->
+            <div class="empty-state">
+              <p>No achievements earned yet</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="tab-content" id="available-achievements">
+          <div class="achievements-list" id="available-achievements-list">
+            <!-- Available achievements will be loaded here -->
+            <div class="empty-state">
+              <p>No achievements available</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <!-- JavaScript for points and achievements functionality -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load user data
+      const userId = localStorage.getItem('userId');
+      const userName = localStorage.getItem('userName');
+      
+      if (userId && userName) {
+        document.getElementById('user-name').textContent = userName;
+        // Check for new achievements first
+        checkAllAchievements(userId).then(() => {
+          // Then load all user data
+          loadUserPoints(userId);
+          loadUserAchievements(userId);
+          loadPointTransactions(userId);
+          loadAvailableAchievements();
+          loadVolunteerStats(userId);
+        });
+        
+        // Set up refresh achievements button
+        document.getElementById('refresh-achievements').addEventListener('click', function() {
+          const userId = localStorage.getItem('userId');
+          if (userId) {
+            // Show loading indicator
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+            this.disabled = true;
+            
+            checkAllAchievements(userId).then(() => {
+              // Reload all user data
+              loadUserPoints(userId);
+              loadUserAchievements(userId);
+              loadPointTransactions(userId);
+              loadAvailableAchievements();
+              loadVolunteerStats(userId);
+              
+              // Reset button
+              this.innerHTML = '<i class="fas fa-sync-alt"></i> Check for New Achievements';
+              this.disabled = false;
+            });
+          }
+        });
+      } else {
+        // Redirect to login if user data not found
+        window.location.href = '/login.html';
+      }
+      
+      // Set up logout button
+      document.getElementById('logout-btn').addEventListener('click', logout);
+      
+      // Set up tabs
+      document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', function() {
+          // Remove active class from all buttons and tabs
+          document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+          
+          // Add active class to clicked button and corresponding tab
+          this.classList.add('active');
+          document.getElementById(this.dataset.tab).classList.add('active');
+        });
+      });
+    });
+    
+    function loadUserPoints(userId) {
+      fetch(`/api/points/user/${userId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch user points');
+          }
+          return response.json();
+        })
+        .then(data => {
+          // Update total points
+          document.getElementById('total-points').textContent = data.total_points || 0;
+          
+          // Update level
+          const level = data.level || 1;
+          document.getElementById('current-level').textContent = level;
+          
+          // Calculate points to next level
+          const pointsToNextLevel = (level * 100) - (data.total_points || 0);
+          document.getElementById('points-to-next').textContent = pointsToNextLevel > 0 ? pointsToNextLevel : 0;
+          
+          // Update progress bar
+          const progressPercentage = ((data.total_points || 0) % 100) / 100 * 100;
+          document.getElementById('level-progress').style.width = `${progressPercentage}%`;
+        })
+        .catch(error => {
+          console.error('Error loading user points:', error);
+        });
+    }
+    
+    function loadUserAchievements(userId) {
+      fetch(`/api/points/achievements/${userId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch user achievements');
+          }
+          return response.json();
+        })
+        .then(achievements => {
+          const container = document.getElementById('earned-achievements');
+          
+          if (achievements.length === 0) {
+            container.innerHTML = '<div class="empty-state"><p>No achievements earned yet</p></div>';
+            document.getElementById('achievements-count').textContent = '0';
+            return;
+          }
+          
+          // Update achievements count
+          document.getElementById('achievements-count').textContent = achievements.length;
+          
+          // Clear the container
+          container.innerHTML = '';
+          
+          // Add each earned achievement
+          achievements.forEach(achievement => {
+            const date = new Date(achievement.earned_at);
+            const formattedDate = date.toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'short', 
+              day: 'numeric' 
+            });
+            
+            container.innerHTML += `
+              <div class="achievement-item">
+                <div class="achievement-icon">
+                  <i class="fas ${achievement.icon}"></i>
+                </div>
+                <div class="achievement-info">
+                  <h4>${achievement.name}</h4>
+                  <p>${achievement.description}</p>
+                  <div class="achievement-date">Earned on ${formattedDate}</div>
+                </div>
+              </div>
+            `;
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching user achievements:', error);
+        });
+    }
+    
+    function loadPointTransactions(userId) {
+      fetch(`/api/points/transactions/${userId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch point transactions');
+          }
+          return response.json();
+        })
+        .then(transactions => {
+          const container = document.getElementById('transaction-list');
+          
+          if (transactions.length === 0) {
+            container.innerHTML = '<div class="empty-state"><p>No point transactions yet</p></div>';
+            return;
+          }
+          
+          // Clear the container
+          container.innerHTML = '';
+          
+          // Add each transaction
+          transactions.forEach(transaction => {
+            const date = new Date(transaction.created_at);
+            const formattedDate = date.toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'short', 
+              day: 'numeric' 
+            });
+            
+            const isNegative = transaction.points < 0;
+            
+            container.innerHTML += `
+              <div class="transaction-item">
+                <div class="transaction-info">
+                  <h4>${transaction.description}</h4>
+                  <div class="transaction-date">${formattedDate}</div>
+                </div>
+                <div class="transaction-points ${isNegative ? 'negative' : ''}">
+                  ${isNegative ? '' : '+'}${transaction.points} points
+                </div>
+              </div>
+            `;
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching point transactions:', error);
+        });
+    }
+    
+    function loadAvailableAchievements() {
+      const role = 'Volunteer'; // For volunteer page
+      const userId = localStorage.getItem('userId');
+      
+      if (!userId) {
+        console.error('User ID not found in localStorage');
+        return;
+      }
+      
+      // First, get the user's earned achievements
+      fetch(`/api/points/achievements/${userId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch user achievements');
+          }
+          return response.json();
+        })
+        .then(earnedAchievements => {
+          // Create a set of earned achievement IDs for easy lookup
+          const earnedAchievementIds = new Set(earnedAchievements.map(a => a.id));
+          
+          // Now fetch all available achievements for this role
+          return fetch(`/api/points/available-achievements/${role}`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Failed to fetch available achievements');
+              }
+              return response.json();
+            })
+            .then(allAchievements => {
+              // Filter out achievements that the user has already earned
+              return allAchievements.filter(achievement => !earnedAchievementIds.has(achievement.id));
+            });
+        })
+        .then(availableAchievements => {
+          const container = document.getElementById('available-achievements-list');
+          
+          if (availableAchievements.length === 0) {
+            container.innerHTML = '<div class="empty-state"><p>You have earned all available achievements!</p></div>';
+            return;
+          }
+          
+          // Clear the container
+          container.innerHTML = '';
+          
+          // Add each available achievement
+          availableAchievements.forEach(achievement => {
+            container.innerHTML += `
+              <div class="achievement-item locked">
+                <div class="achievement-icon">
+                  <i class="fas ${achievement.icon}"></i>
+                </div>
+                <div class="achievement-info">
+                  <h4>${achievement.name}</h4>
+                  <p>${achievement.description}</p>
+                  <div class="achievement-date">Requires ${achievement.points_required} points</div>
+                </div>
+              </div>
+            `;
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching available achievements:', error);
+        });
+    }
+    
+    function loadVolunteerStats(userId) {
+      // Load inventory updates count
+      fetch(`/api/volunteer-stats/inventory-updates/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('inventory-updates').textContent = data.count || 0;
+        })
+        .catch(error => {
+          console.error('Error loading inventory updates:', error);
+        });
+      
+      // Load reservations managed count
+      fetch(`/api/volunteer-stats/reservations-managed/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('reservations-managed').textContent = data.count || 0;
+        })
+        .catch(error => {
+          console.error('Error loading reservations managed:', error);
+        });
+    }
+    
+    function checkAllAchievements(userId) {
+      return fetch(`/api/auto-achievements/check-all/${userId}`, {
+        method: 'POST'
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to check achievements');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Achievement check results:', data);
+        if (data.anyAwarded) {
+          showMessage('Congratulations! You have earned new achievements!', 'success');
+        }
+        return data;
+      })
+      .catch(error => {
+        console.error('Error checking achievements:', error);
+        return { success: false, error: error.message };
+      });
+    }
+    
+    function showMessage(message, type) {
+      const messageContainer = document.createElement('div');
+      messageContainer.className = `message ${type}`;
+      messageContainer.textContent = message;
+      
+      document.body.appendChild(messageContainer);
+      
+      // Remove the message after 5 seconds
+      setTimeout(() => {
+        messageContainer.classList.add('fade-out');
+        setTimeout(() => {
+          document.body.removeChild(messageContainer);
+        }, 500);
+      }, 5000);
+    }
+    
+    function logout() {
+      // Clear user data from localStorage
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userRole');
+      
+      // Redirect to login page
+      window.location.href = '/login.html';
+    }
+  </script>
+</body>
+</html>

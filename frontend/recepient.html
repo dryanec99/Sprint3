@@ -3,129 +3,579 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Donate Food - Community Fridge</title>
+  <title>Recipient Dashboard - Community Fridge</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    body {
-      font-family: Arial, sans-serif;
+    :root {
+      --primary-color: #2e8b57;
+      --secondary-color: #3cb371;
+      --accent-color: #f8b500;
+      --text-color: #333;
+      --light-color: #f9f9f9;
+      --white-color: #ffffff;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
       margin: 0;
       padding: 0;
-      background-color: #f9f9f9;
-      color: #333;
+      box-sizing: border-box;
     }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text-color);
+      background-color: var(--light-color);
+      line-height: 1.6;
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    /* Header Styles */
     header {
-      background-color: #2e8b57;
-      color: white;
-      padding: 20px 0;
-      text-align: center;
+      background-color: var(--primary-color);
+      color: var(--white-color);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+    
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      color: var(--white-color);
+      text-decoration: none;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .logo i {
+      margin-right: 10px;
+      font-size: 1.8rem;
+    }
+    
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+    
+    nav ul li {
+      margin-left: 25px;
+    }
+    
+    nav ul li a {
+      color: var(--white-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      padding: 5px 0;
       position: relative;
     }
-    header h1 {
-      margin: 0;
-      font-size: 2.5em;
-    }
-    header nav a {
-      color: white;
-      margin: 0 15px;
-      text-decoration: none;
-      font-size: 1.1em;
-    }
-    /* Back Arrow Button */
-    header .back-btn {
+    
+    nav ul li a:after {
+      content: '';
       position: absolute;
-      left: 20px;
-      top: 20px;
-      background: linear-gradient(90deg, #2e8b57 0%, #3cb371 100%);
-      color: white;
-      padding: 12px 20px;
-      border: none;
+      width: 0;
+      height: 2px;
+      background-color: var(--white-color);
+      bottom: 0;
+      left: 0;
+      transition: var(--transition);
+    }
+    
+    nav ul li a:hover:after,
+    nav ul li a.active:after {
+      width: 100%;
+    }
+    
+    .user-menu {
+      display: flex;
+      align-items: center;
+      color: var(--white-color);
+    }
+    
+    .user-greeting {
+      margin-right: 15px;
+      font-weight: 500;
+    }
+    
+    .logout-btn {
+      background-color: transparent;
+      border: 2px solid var(--white-color);
+      color: var(--white-color);
+      padding: 8px 15px;
       border-radius: 30px;
       cursor: pointer;
-      font-size: 1em;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      font-weight: 500;
+      transition: var(--transition);
     }
-    header .back-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    
+    .logout-btn:hover {
+      background-color: var(--white-color);
+      color: var(--primary-color);
     }
-    main {
-      padding: 40px 20px;
+    
+    /* Dashboard Styles */
+    .dashboard {
+      padding: 60px 0;
     }
-    .sections {
-      margin-bottom: 60px;
+    
+    .welcome-section {
       text-align: center;
+      margin-bottom: 40px;
     }
-    .sections h2 {
-      font-size: 2em;
-      margin-bottom: 20px;
-    }
-    .sections p {
-      font-size: 1.2em;
-      margin-bottom: 20px;
-    }
-    /* New Recipient Menu Styles */
-    .recipient-menu {
-      list-style: none;
-      padding: 0;
-      margin: 20px auto;
-      max-width: 600px;
-    }
-    .recipient-item {
+    
+    .welcome-section h1 {
+      font-size: 2.5rem;
+      color: var(--primary-color);
       margin-bottom: 15px;
     }
-    .recipient-item a {
-      display: block;
+    
+    .welcome-section p {
+      font-size: 1.2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .dashboard-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+    
+    .card {
+      background-color: var(--white-color);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-content {
+      padding: 25px;
+      text-align: center;
+    }
+    
+    .card-icon {
+      font-size: 3rem;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+    
+    .card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: var(--primary-color);
+    }
+    
+    .card p {
+      margin-bottom: 20px;
+      color: var(--text-color);
+    }
+    
+    .card-btn {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: var(--white-color);
+      padding: 10px 20px;
+      border-radius: 30px;
       text-decoration: none;
-      padding: 15px;
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      color: #2e8b57;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    
+    .card-btn:hover {
+      background-color: var(--secondary-color);
+    }
+    
+    /* Stats Section */
+    .stats-section {
+      background-color: var(--white-color);
+      padding: 40px 0;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      margin-bottom: 50px;
+    }
+    
+    .stats-title {
+      text-align: center;
+      margin-bottom: 30px;
+      color: var(--primary-color);
+    }
+    
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .stat-number {
+      font-size: 2.5rem;
       font-weight: bold;
-      text-align: center;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      color: var(--primary-color);
+      margin-bottom: 10px;
     }
-    .recipient-item a:hover {
-      background-color: #f2f2f2;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    
+    .stat-label {
+      font-size: 1.1rem;
+      color: var(--text-color);
     }
+    
+    /* Footer */
     footer {
-      background-color: #2e8b57;
-      color: white;
+      background-color: var(--primary-color);
+      color: var(--white-color);
+      padding: 30px 0;
       text-align: center;
-      padding: 15px;
-      position: fixed;
-      width: 100%;
-      bottom: 0;
+    }
+    
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .footer-logo i {
+      margin-right: 10px;
+      font-size: 1.8rem;
+    }
+    
+    .footer-links {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    
+    .footer-links a {
+      color: var(--white-color);
+      margin: 0 15px;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+    
+    .copyright {
+      font-size: 0.9rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-container {
+        flex-direction: column;
+        padding: 15px 0;
+      }
+      
+      nav ul {
+        margin-top: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      nav ul li {
+        margin: 5px 10px;
+      }
+      
+      .user-menu {
+        margin-top: 15px;
+      }
+    }
+    
+    /* Badge for notifications */
+    .badge {
+      background-color: var(--accent-color);
+      color: var(--white-color);
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 0.8em;
+      margin-left: 5px;
     }
   </style>
 </head>
 <body>
   <header>
-    <button class="back-btn" onclick="window.history.back()">&larr; Back</button>
-    <h1><a href="/" style="color: white; text-decoration: none;">Community Fridge</a></h1>
+    <div class="container header-container">
+      <a href="/" class="logo">
+        <i class="fas fa-utensils"></i>
+        Community Fridge
+      </a>
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/find-fridge">Find a Fridge</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="user-menu">
+        <span class="user-greeting">Hello, <span id="user-name">Recipient</span>!</span>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+    </div>
   </header>
 
   <main>
-    <!-- Food Recipient Section -->
-    <section class="sections" id="receive">
-      <h2>Food Recipient</h2>
-      <p>If you are looking for food, you can see the food available in multiple community fridge locations, reserve the food, and pick it up.</p>
-      <ul class="recipient-menu">
-        <li class="recipient-item"><a href="viewfood">View Available Food</a></li>
-        <li class="recipient-item"><a href="reservefood">Reserve Food</a></li>
-        <li class="recipient-item"><a href="bob-reservations">Reservations</a></li>
-        <li class="recipient-item"><a href="messages">Messages <span id="unread-count" style="background-color: #e74c3c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.8em; margin-left: 5px; display: none;"></span></a></li>
-      </ul>
+    <section class="dashboard">
+      <div class="container">
+        <div class="welcome-section">
+          <h1>Welcome to Your Recipient Dashboard</h1>
+          <p>Find available food, make reservations, and manage your pickups all in one place.</p>
+        </div>
+        
+        <div class="dashboard-cards">
+          <div class="card">
+            <div class="card-content">
+              <div class="card-icon">
+                <i class="fas fa-apple-alt"></i>
+              </div>
+              <h3>Available Food</h3>
+              <p>Browse all available food items in our community fridges.</p>
+              <a href="viewfood" class="card-btn">View Food</a>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-content">
+              <div class="card-icon">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+              <h3>Reserve Food</h3>
+              <p>Reserve food items for pickup at your convenience.</p>
+              <a href="reservefood" class="card-btn">Make Reservation</a>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-content">
+              <div class="card-icon">
+                <i class="fas fa-list-alt"></i>
+              </div>
+              <h3>My Reservations</h3>
+              <p>View and manage your current food reservations.</p>
+              <a href="bob-reservations" class="card-btn">View Reservations</a>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-content">
+              <div class="card-icon">
+                <i class="fas fa-comments"></i>
+              </div>
+              <h3>Messages</h3>
+              <p>Communicate with donors and volunteers.</p>
+              <a href="messages" class="card-btn">View Messages <span id="unread-count" class="badge" style="display: none;"></span></a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-content">
+              <div class="card-icon">
+                <i class="fas fa-award"></i>
+              </div>
+              <h3>My Points & Achievements</h3>
+              <p>View your points, level, and earned achievements.</p>
+              <a href="recipient-points" class="card-btn">View Points</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-content">
+              <div class="card-icon">
+                <i class="fas fa-comment-alt"></i>
+              </div>
+              <h3>Provide Feedback</h3>
+              <p>Share your experience and earn points for your feedback.</p>
+              <a href="feedback" class="card-btn">Give Feedback</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="stats-section">
+          <h2 class="stats-title">Your Activity</h2>
+          <div class="stats-container">
+            <div class="stat-item">
+              <div class="stat-number" id="reservations-count">0</div>
+              <div class="stat-label">Reservations</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="pickups-count">0</div>
+              <div class="stat-label">Completed Pickups</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="points-count">0</div>
+              <div class="stat-label">Points Earned</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="level-count">1</div>
+              <div class="stat-label">Current Level</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
   <footer>
-    <p>&copy; 2025 Community Fridge. All rights reserved.</p>
+    <div class="container footer-content">
+      <div class="footer-logo">
+        <i class="fas fa-utensils"></i>
+        Community Fridge
+      </div>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/find-fridge">Find a Fridge</a>
+        <a href="/contact">Contact</a>
+      </div>
+      <p class="copyright">&copy; 2025 Community Fridge. All rights reserved.</p>
+    </div>
   </footer>
 
-  <!-- Include JavaScript files -->
-  <script src="/static/js/common.js"></script>
-  <script src="/static/js/dashboard.js"></script>
+  <!-- JavaScript for user personalization and dashboard functionality -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get user data from localStorage
+      const userName = localStorage.getItem('userName') || 'Recipient';
+      const userId = localStorage.getItem('userId');
+      
+      // Update the greeting with the user's name
+      document.getElementById('user-name').textContent = userName;
+      
+      // Check for unread messages
+      checkUnreadMessages();
+      
+      // Load user stats
+      loadUserStats();
+    });
+    
+    function checkUnreadMessages() {
+      // Get user ID from localStorage
+      const userId = localStorage.getItem('userId');
+      if (!userId) return;
+      
+      // Fetch actual unread messages count from the API
+      fetch(`/api/messages/unread-count/${userId}`)
+        .then(response => {
+          if (!response.ok) {
+            return { count: 0 }; // Default if API fails
+          }
+          return response.json();
+        })
+        .then(data => {
+          const unreadBadge = document.getElementById('unread-count');
+          const unreadCount = data.count || 0;
+          
+          if (unreadCount > 0) {
+            unreadBadge.textContent = unreadCount;
+            unreadBadge.style.display = 'inline';
+          } else {
+            unreadBadge.style.display = 'none';
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching unread messages:', error);
+          // Hide the badge on error
+          const unreadBadge = document.getElementById('unread-count');
+          unreadBadge.style.display = 'none';
+        });
+    }
+    
+    function loadUserStats() {
+      const userId = localStorage.getItem('userId');
+      
+      if (!userId) {
+        console.error('User ID not found in localStorage');
+        return;
+      }
+      
+      // Fetch user points from the API
+      fetch(`/api/points/user/${userId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch user points');
+          }
+          return response.json();
+        })
+        .then(data => {
+          // Update points display
+          document.getElementById('points-count').textContent = data.total_points || 0;
+          
+          // Add level information
+          const levelElement = document.getElementById('level-count');
+          if (levelElement) {
+            levelElement.textContent = data.level || 1;
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching user points:', error);
+          document.getElementById('points-count').textContent = '0';
+        });
+      
+      // Fetch reservation count
+      fetch(`/api/recipient-reservations/count/${userId}`)
+        .then(response => {
+          if (!response.ok) {
+            return { count: 0 }; // Default if API fails
+          }
+          return response.json();
+        })
+        .then(data => {
+          document.getElementById('reservations-count').textContent = data.count || 0;
+        })
+        .catch(error => {
+          console.error('Error fetching reservation count:', error);
+          document.getElementById('reservations-count').textContent = '0';
+        });
+      
+      // For completed pickups, we'll use a placeholder for now
+      // In a real app, you would have an API endpoint for this
+      document.getElementById('pickups-count').textContent = '0';
+    }
+    
+    function logout() {
+      // Clear user data from storage
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userRole');
+      sessionStorage.removeItem('currentUser');
+      
+      // Redirect to home page
+      window.location.href = '/';
+    }
+  </script>
 </body>
 </html>

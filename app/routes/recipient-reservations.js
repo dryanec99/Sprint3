@@ -3,6 +3,30 @@ const express = require('express');
 const router = express.Router();
 const db = require('../services/db');
 
+// Get count of reservations for a recipient
+router.get('/count/:recipientId', async (req, res) => {
+    try {
+        const { recipientId } = req.params;
+        
+        if (!recipientId) {
+            return res.status(400).json({ error: 'Recipient ID is required' });
+        }
+        
+        const query = `
+            SELECT COUNT(*) as count
+            FROM reservations
+            WHERE recipientID = ?
+        `;
+        
+        const results = await db.query(query, [recipientId]);
+        
+        res.json({ count: results[0]?.count || 0 });
+    } catch (error) {
+        console.error('Error counting reservations:', error);
+        res.status(500).json({ error: 'Failed to count reservations', details: error.message });
+    }
+});
+
 // Get all reservations for a recipient
 router.get('/:recipientId', async (req, res) => {
     try {

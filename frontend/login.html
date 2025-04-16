@@ -230,6 +230,7 @@
         localStorage.setItem('userId', data.user.id);
         localStorage.setItem('userName', data.user.name);
         localStorage.setItem('userRole', data.user.role);
+        localStorage.setItem('userEmail', data.user.email);
         
         // Also store in sessionStorage for the current session
         const userData = {
@@ -290,14 +291,20 @@
     signupMessage.style.display = "none";
   });
 
-  // Show/hide volunteer form based on user type
   userType.addEventListener("change", function() {
-    if (this.value === "Volunteer") {
-      volunteerForm.style.display = "block";
-    } else {
-      volunteerForm.style.display = "none";
-    }
-  });
+  if (this.value === "Volunteer") {
+    volunteerForm.style.display = "block";
+    // Ensure volunteer fields are required
+    document.getElementById("whyVolunteer").setAttribute("required", "required");
+    document.getElementById("availability").setAttribute("required", "required");
+  } else {
+    volunteerForm.style.display = "none";
+    // Remove required attribute when not volunteering
+    document.getElementById("whyVolunteer").removeAttribute("required");
+    document.getElementById("availability").removeAttribute("required");
+  }
+});
+
 
   // Handle signup form submission
   signupForm.addEventListener("submit", function(e) {

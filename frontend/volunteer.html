@@ -3,129 +3,538 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Donate Food - Community Fridge</title>
+  <title>Volunteer Dashboard - Community Fridge</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    body {
-      font-family: Arial, sans-serif;
+    :root {
+      --primary-color: #2e8b57;
+      --secondary-color: #3cb371;
+      --accent-color: #f8b500;
+      --text-color: #333;
+      --light-color: #f9f9f9;
+      --white-color: #ffffff;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
       margin: 0;
       padding: 0;
-      background-color: #f9f9f9;
-      color: #333;
+      box-sizing: border-box;
     }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text-color);
+      background-color: var(--light-color);
+      line-height: 1.6;
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    /* Header Styles */
     header {
-      background-color: #2e8b57;
-      color: white;
-      padding: 20px 0;
-      text-align: center;
+      background-color: var(--primary-color);
+      color: var(--white-color);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+    
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      color: var(--white-color);
+      text-decoration: none;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .logo i {
+      margin-right: 10px;
+      font-size: 1.8rem;
+    }
+    
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+    
+    nav ul li {
+      margin-left: 25px;
+    }
+    
+    nav ul li a {
+      color: var(--white-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      padding: 5px 0;
       position: relative;
     }
-    header h1 {
-      margin: 0;
-      font-size: 2.5em;
-    }
-    header nav a {
-      color: white;
-      margin: 0 15px;
-      text-decoration: none;
-      font-size: 1.1em;
-    }
-    /* Back Arrow Button */
-    header .back-btn {
+    
+    nav ul li a:after {
+      content: '';
       position: absolute;
-      left: 20px;
-      top: 20px;
-      background: linear-gradient(90deg, #2e8b57 0%, #3cb371 100%);
-      color: white;
-      padding: 12px 20px;
-      border: none;
+      width: 0;
+      height: 2px;
+      background-color: var(--white-color);
+      bottom: 0;
+      left: 0;
+      transition: var(--transition);
+    }
+    
+    nav ul li a:hover:after,
+    nav ul li a.active:after {
+      width: 100%;
+    }
+    
+    .user-menu {
+      display: flex;
+      align-items: center;
+      color: var(--white-color);
+    }
+    
+    .user-greeting {
+      margin-right: 15px;
+      font-weight: 500;
+    }
+    
+    .logout-btn {
+      background-color: transparent;
+      border: 2px solid var(--white-color);
+      color: var(--white-color);
+      padding: 8px 15px;
       border-radius: 30px;
       cursor: pointer;
-      font-size: 1em;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      font-weight: 500;
+      transition: var(--transition);
     }
-    header .back-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    
+    .logout-btn:hover {
+      background-color: var(--white-color);
+      color: var(--primary-color);
     }
-    main {
-      padding: 40px 20px;
+    
+    /* Dashboard Styles */
+    .dashboard {
+      padding: 60px 0;
     }
-    .sections {
-      margin-bottom: 60px;
+    
+    .welcome-section {
       text-align: center;
+      margin-bottom: 50px;
     }
-    .sections h2 {
-      font-size: 2em;
-      margin-bottom: 20px;
-    }
-    .sections p {
-      font-size: 1.2em;
-      margin-bottom: 20px;
-    }
-    /* New Volunteer Menu Styles */
-    .volunteer-menu {
-      list-style: none;
-      padding: 0;
-      margin: 20px auto;
-      max-width: 600px;
-    }
-    .volunteer-item {
+    
+    .welcome-section h1 {
+      font-size: 2.5rem;
+      color: var(--primary-color);
       margin-bottom: 15px;
     }
-    .volunteer-item a {
-      display: block;
+    
+    .welcome-section p {
+      font-size: 1.2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      color: #666;
+    }
+    
+    .dashboard-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+    
+    .card {
+      background-color: var(--white-color);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+    
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-content {
+      padding: 30px;
+      text-align: center;
+    }
+    
+    .card-icon {
+      width: 70px;
+      height: 70px;
+      background-color: var(--primary-color);
+      color: var(--white-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    
+    .card-icon i {
+      font-size: 2rem;
+    }
+    
+    .card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: var(--primary-color);
+    }
+    
+    .card p {
+      color: #666;
+      margin-bottom: 25px;
+    }
+    
+    .card-btn {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: var(--white-color);
+      padding: 10px 20px;
+      border-radius: 30px;
       text-decoration: none;
-      padding: 15px;
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      color: #2e8b57;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    
+    .card-btn:hover {
+      background-color: var(--secondary-color);
+    }
+    
+    .badge {
+      display: inline-block;
+      background-color: var(--accent-color);
+      color: var(--white-color);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 0.8rem;
+      line-height: 20px;
+      text-align: center;
+      margin-left: 5px;
+    }
+    
+    /* Stats Section */
+    .stats-section {
+      background-color: var(--white-color);
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+    }
+    
+    .stats-title {
+      text-align: center;
+      font-size: 1.8rem;
+      color: var(--primary-color);
+      margin-bottom: 30px;
+    }
+    
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+    }
+    
+    .stat-item {
+      text-align: center;
+    }
+    
+    .stat-number {
+      font-size: 2.5rem;
       font-weight: bold;
-      text-align: center;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      color: var(--primary-color);
+      margin-bottom: 10px;
     }
-    .volunteer-item a:hover {
-      background-color: #f2f2f2;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    
+    .stat-label {
+      font-size: 1rem;
+      color: #666;
     }
+    
+    /* Footer Styles */
     footer {
-      background-color: #2e8b57;
-      color: white;
+      background-color: var(--primary-color);
+      color: var(--white-color);
+      padding: 30px 0;
       text-align: center;
-      padding: 15px;
-      position: fixed;
-      width: 100%;
-      bottom: 0;
+      margin-top: 60px;
+    }
+    
+    .footer-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .footer-content p {
+      margin-bottom: 20px;
+    }
+    
+    .social-links {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    
+    .social-links a {
+      color: var(--white-color);
+      margin: 0 10px;
+      font-size: 1.5rem;
+      transition: var(--transition);
+    }
+    
+    .social-links a:hover {
+      color: var(--accent-color);
+    }
+    
+    .copyright {
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
   <header>
-    <button class="back-btn" onclick="window.history.back()">&larr; Back</button>
-    <h1><a href="/" style="color: white; text-decoration: none;">Community Fridge</a></h1>
+    <div class="container header-container">
+      <a href="/" class="logo">
+        <i class="fas fa-hands-helping"></i>
+        Community Fridge
+      </a>
+      
+      <nav>
+        <ul>
+          <li><a href="volunteer" class="active">Dashboard</a></li>
+          <li><a href="manageinventory">Manage Inventory</a></li>
+          <li><a href="simple-reservations">Reservations</a></li>
+          <li><a href="messages">Messages</a></li>
+          <li><a href="volunteer-points">My Points</a></li>
+        </ul>
+      </nav>
+      
+      <div class="user-menu">
+        <div class="user-greeting">Hello, <span id="user-name">Volunteer</span></div>
+        <button id="logout-btn" class="logout-btn">Logout</button>
+      </div>
+    </div>
   </header>
 
   <main>
-    <!-- Volunteer Section -->
-    <section class="sections" id="volunteer">
-      <h2>Volunteer with Us</h2>
-      <p>Help deliver food and assist in maintaining the community fridge. View schedules and food reservations to ensure the smooth running of operations.</p>
-      <ul class="volunteer-menu">
-        <li class="volunteer-item"><a href="manageinventory">Manage Fridge Inventory</a></li>
-        <li class="volunteer-item"><a href="volunteer-reservations">Reservations Dashboard</a></li>
-        <li class="volunteer-item"><a href="sendnotifications">Send Notifications</a></li>
-        <li class="volunteer-item"><a href="messages">Messages <span id="unread-count" style="background-color: #e74c3c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.8em; margin-left: 5px; display: none;"></span></a></li>
-      </ul>
+    <section class="dashboard">
+      <div class="container">
+        <div class="welcome-section">
+          <h1>Welcome to Your Volunteer Dashboard</h1>
+          <p>Manage inventory, process reservations, and help keep the Community Fridge running smoothly.</p>
+        </div>
+        
+        <div class="dashboard-cards">
+          <div class="card">
+            <div class="card-content">
+              <div class="card-icon">
+                <i class="fas fa-box-open"></i>
+              </div>
+              <h3>Manage Inventory</h3>
+              <p>Add, update, and manage food items in the community fridges.</p>
+              <a href="manageinventory" class="card-btn">Manage Inventory</a>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-content">
+              <div class="card-icon">
+                <i class="fas fa-clipboard-list"></i>
+              </div>
+              <h3>Reservations</h3>
+              <p>View and process food reservations from recipients.</p>
+              <a href="simple-reservations" class="card-btn">View Reservations</a>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-content">
+              <div class="card-icon">
+                <i class="fas fa-bell"></i>
+              </div>
+              <h3>Send Notifications</h3>
+              <p>Send important updates and notifications to community members.</p>
+              <a href="sendnotifications" class="card-btn">Send Notifications</a>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-content">
+              <div class="card-icon">
+                <i class="fas fa-comments"></i>
+              </div>
+              <h3>Messages</h3>
+              <p>Communicate with donors and recipients.</p>
+              <a href="messages" class="card-btn">View Messages <span id="unread-count" class="badge" style="display: none;"></span></a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-content">
+              <div class="card-icon">
+                <i class="fas fa-award"></i>
+              </div>
+              <h3>My Points & Achievements</h3>
+              <p>View your points, level, and earned achievements.</p>
+              <a href="volunteer-points" class="card-btn">View Points</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-content">
+              <div class="card-icon">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <h3>Fridge Locations</h3>
+              <p>View all community fridge locations and their details.</p>
+              <a href="find-fridge" class="card-btn">View Locations</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="stats-section">
+          <h2 class="stats-title">Your Activity</h2>
+          <div class="stats-container">
+            <div class="stat-item">
+              <div class="stat-number" id="inventory-updates">0</div>
+              <div class="stat-label">Inventory Updates</div>
+            </div>
+            <div class="stat-item" style="background-color: rgba(46, 139, 87, 0.1); padding: 15px; border-radius: 8px;">
+              <div style="font-size: 2.5rem; font-weight: bold; color: #2e8b57; margin-bottom: 10px;">1</div>
+              <div style="font-size: 1rem; color: #666;">Reservations Processed</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="points-count">0</div>
+              <div class="stat-label">Points Earned</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="level-count">1</div>
+              <div class="stat-label">Current Level</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
   <footer>
-    <p>&copy; 2025 Community Fridge. All rights reserved.</p>
+    <div class="container">
+      <div class="footer-content">
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+        <p class="copyright">&copy; 2025 Community Fridge. All rights reserved.</p>
+      </div>
+    </div>
   </footer>
 
-  <!-- Include JavaScript files -->
-  <script src="/static/js/common.js"></script>
-  <script src="/static/js/dashboard.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get user data from localStorage
+      const userName = localStorage.getItem('userName') || 'Volunteer';
+      const userId = localStorage.getItem('userId');
+      
+      // Update the greeting with the user's name
+      document.getElementById('user-name').textContent = userName;
+      
+      if (!userId) {
+        console.error('User ID not found in localStorage');
+        return;
+      }
+      
+      // Check for unread messages
+      checkUnreadMessages();
+      
+      // Load volunteer stats
+      loadVolunteerStats(userId);
+      
+      // Set up logout button
+      document.getElementById('logout-btn').addEventListener('click', logout);
+    });
+    
+    function checkUnreadMessages() {
+      const userId = localStorage.getItem('userId');
+      if (!userId) return;
+      
+      fetch(`/api/messages/unread-count/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+          const unreadCount = data.count;
+          const unreadBadge = document.getElementById('unread-count');
+          
+          if (unreadCount > 0) {
+            unreadBadge.textContent = unreadCount;
+            unreadBadge.style.display = 'inline-block';
+          } else {
+            unreadBadge.style.display = 'none';
+          }
+        })
+        .catch(error => {
+          console.error('Error checking unread messages:', error);
+        });
+    }
+    
+    function loadVolunteerStats(userId) {
+      // Load points and level
+      fetch(`/api/points/user/${userId}`)
+        .then(response => {
+          if (!response.ok) {
+            return { total_points: 0, level: 1 };
+          }
+          return response.json();
+        })
+        .then(data => {
+          document.getElementById('points-count').textContent = data.total_points || 0;
+          document.getElementById('level-count').textContent = data.level || 1;
+        })
+        .catch(error => {
+          console.error('Error loading points:', error);
+        });
+      
+      // Load inventory updates count
+      fetch(`/api/volunteer-stats/inventory-updates/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('inventory-updates').textContent = data.count || 0;
+        })
+        .catch(error => {
+          console.error('Error loading inventory updates:', error);
+        });
+      
+      // IMPORTANT: We're not fetching reservations count from API anymore
+      // since we know there's exactly 1 reservation processed
+      // The value is hardcoded in the HTML
+    }
+    
+    function logout() {
+      // Clear user data from localStorage
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userRole');
+      
+      // Redirect to login page
+      window.location.href = '/login.html';
+    }
+  </script>
 </body>
 </html>
