@@ -246,53 +246,44 @@
       color: var(--text-color);
     }
     
-    /* Footer */
+    /* Footer Styles */
     footer {
       background-color: var(--primary-color);
       color: var(--white-color);
       padding: 30px 0;
       text-align: center;
+      margin-top: 60px;
     }
     
     .footer-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      max-width: 800px;
+      margin: 0 auto;
     }
     
-    .footer-logo {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-    
-    .footer-logo i {
-      margin-right: 10px;
-      font-size: 1.8rem;
-    }
-    
-    .footer-links {
-      display: flex;
+    .footer-content p {
       margin-bottom: 20px;
     }
     
-    .footer-links a {
+    .social-links {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    
+    .social-links a {
       color: var(--white-color);
-      margin: 0 15px;
-      text-decoration: none;
+      margin: 0 10px;
+      font-size: 1.5rem;
       transition: var(--transition);
     }
     
-    .footer-links a:hover {
-      text-decoration: underline;
+    .social-links a:hover {
+      color: var(--accent-color);
     }
     
     .copyright {
       font-size: 0.9rem;
     }
-    
     /* Responsive */
     @media (max-width: 768px) {
       .header-container {
@@ -450,18 +441,15 @@
   </main>
 
   <footer>
-    <div class="container footer-content">
-      <div class="footer-logo">
-        <i class="fas fa-utensils"></i>
-        Community Fridge
+    <div class="container">
+      <div class="footer-content">
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+        <p class="copyright">&copy; 2025 Community Fridge. All rights reserved.</p>
       </div>
-      <div class="footer-links">
-        <a href="/">Home</a>
-        <a href="/about">About</a>
-        <a href="/find-fridge">Find a Fridge</a>
-        <a href="/contact">Contact</a>
-      </div>
-      <p class="copyright">&copy; 2025 Community Fridge. All rights reserved.</p>
     </div>
   </footer>
 
@@ -573,8 +561,8 @@
       localStorage.removeItem('userRole');
       sessionStorage.removeItem('currentUser');
       
-      // Redirect to home page
-      window.location.href = '/';
+      // Redirect to login page
+      window.location.href = '/login';
     }
   </script>
 </body>
